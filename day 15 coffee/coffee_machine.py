@@ -21,7 +21,7 @@ MENU = {
             "coffee": 24,
         },
         "cost": 3.0,
-    }
+    },
 }
 
 resources = {
@@ -55,7 +55,7 @@ def coins_input():
     nickels = check_user_input("nickels")
     dimes = check_user_input("dimes")
     pennies = check_user_input("pennies")
-    total_paid = 0.25*quarters + 0.1*nickels + 0.05 * dimes + 0.01 * pennies
+    total_paid = 0.25 * quarters + 0.1 * nickels + 0.05 * dimes + 0.01 * pennies
     return total_paid
 
 
@@ -71,7 +71,8 @@ options = ["espresso", "latte", "cappuccino", "off", "report"]
 
 while on:
     user = input(
-        f"What would you like? Espresso (${costs[0]:.2f}), Latte (${costs[1]:.2f}) or Cappuccino $({costs[2]:.2f})?").lower()
+        f"What would you like? Espresso (${costs[0]:.2f}), Latte (${costs[1]:.2f}) or Cappuccino $({costs[2]:.2f})?"
+    ).lower()
 
     if user not in options:
         print("Invalid option, retry")
