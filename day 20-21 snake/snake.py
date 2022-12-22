@@ -8,6 +8,7 @@ class Snake:
     def __init__(self):
        self.segments = []
        self.create_snake()
+       self.head = self.segments[0]
        
     def create_snake(self):
 
@@ -22,14 +23,18 @@ class Snake:
     def move(self):
         for seg_num in range(len(self.segments)-1, 0, -1):
             self.segments[seg_num].goto(self.segments[seg_num-1].pos()) # move segment to the position of the segment in front of it
-        self.segments[0].fd(MOVE_DIST)
+        self.head.fd(MOVE_DIST)
     
     # The next 4 methods only refer to first block, telling it to change heading depending on arrow click
     def up(self):
-        self.segments[0].setheading(90)
+        if self.head.heading() != 270:
+            self.head.setheading(90)
     def down(self):
-        self.segments[0].setheading(270)
+        if self.head.heading() != 90:
+            self.head.setheading(270)
     def left(self):
-        self.segments[0].setheading(180)
+        if self.head.heading() != 0:
+            self.head.setheading(180)
     def right(self):
-        self.segments[0].setheading(0)
+        if self.head.heading() != 180:
+            self.head.setheading(0)
