@@ -1,6 +1,8 @@
 from turtle import Turtle
 
+# constants are in capitals - stored up here to make easier to find if want to change
 INITIAL_POS = [0, -20, -40]
+MOVE_DIST = 20
 
 class Snake:
     def __init__(self):
@@ -20,5 +22,14 @@ class Snake:
     def move(self):
         for seg_num in range(len(self.segments)-1, 0, -1):
             self.segments[seg_num].goto(self.segments[seg_num-1].pos()) # move segment to the position of the segment in front of it
-        self.segments[0].fd(20)
-        self.segments[0].left(90)
+        self.segments[0].fd(MOVE_DIST)
+    
+    # The next 4 methods only refer to first block, telling it to change heading depending on arrow click
+    def up(self):
+        self.segments[0].setheading(90)
+    def down(self):
+        self.segments[0].setheading(270)
+    def left(self):
+        self.segments[0].setheading(180)
+    def right(self):
+        self.segments[0].setheading(0)
