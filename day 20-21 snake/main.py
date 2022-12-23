@@ -11,8 +11,6 @@ screen.title("SNAKE!!!!!!!!")
 
 screen.tracer(0) 
 
-initial_pos = [0, -20, -40]
-
 segments = []
 
 sk = Snake()
@@ -25,7 +23,7 @@ screen.onkey(sk.up, "Up") # go up when click up arrow
 screen.onkey(sk.down,"Down")
 screen.onkey(sk.left, "Left")
 screen.onkey(sk.right, "Right")
-score = 0
+
 # screen.textinput(f"Score: {score}")
 game_on = True
 
@@ -40,6 +38,17 @@ while game_on:
         print("nom nom")
         print(food.distance((sk.head.pos())))
         food.move_pos() # move food to new position if eaten
+        sk.extend()
+        scoreboard.update_score()
+        
+    #Detect wall collision
+    if abs(sk.head.xcor()) >290 or abs(sk.head.ycor()) >290:
+        scoreboard.game_over()
+        game_on=False
+    for segment in sk.segments[1:]:
+        if sk.head.distance(segment)<10:
+            scoreboard.game_over()
+            game_on=False
         
     
 screen.exitonclick()

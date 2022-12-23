@@ -1,7 +1,7 @@
 from turtle import Turtle
 
 # constants are in capitals - stored up here to make easier to find if want to change
-INITIAL_POS = [0, -20, -40]
+INITIAL_POS = [(0,0), (-20,0), (-40,0)]
 MOVE_DIST = 20
 RIGHT = 0
 UP = 90
@@ -13,21 +13,28 @@ class Snake:
        self.segments = []
        self.create_snake()
        self.head = self.segments[0]
+       self.tail = self.segments[-1]
        
     def create_snake(self):
-
-        for i in range(3):
-            new_segment = Turtle(shape="square")
-            new_segment.color("white")
-            new_segment.pu() # keep pen up - otherwise draws
-            new_segment.goto(x=INITIAL_POS[i], y=0)
-            new_segment.speed("slowest")
-            self.segments.append(new_segment)
+        for position in INITIAL_POS:
+            self.add_segment(position)
     
     def move(self):
         for seg_num in range(len(self.segments)-1, 0, -1):
             self.segments[seg_num].goto(self.segments[seg_num-1].pos()) # move segment to the position of the segment in front of it
         self.head.fd(MOVE_DIST)
+    
+    def add_segment(self, position):
+        # add new segment to end of snake
+        new_segment = Turtle(shape="square")
+        new_segment.color("white")
+        new_segment.pu() # keep pen up - otherwise draws
+        new_segment.goto(position)
+        self.segments.append(new_segment)
+    
+    def extend(self):
+        # extend snake when want more food
+        self.add_segment(self.segments[-1].position())
     
     # The next 4 methods only refer to first block, telling it to change heading depending on arrow click
     def up(self):

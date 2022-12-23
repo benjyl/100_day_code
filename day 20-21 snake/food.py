@@ -14,3 +14,4 @@ class Food(Turtle):
     
     def move_pos(self):
         self.goto(x=random.randint(-280, 280), y=random.randint(-280, 280))
+        
