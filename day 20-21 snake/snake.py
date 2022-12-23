@@ -3,6 +3,10 @@ from turtle import Turtle
 # constants are in capitals - stored up here to make easier to find if want to change
 INITIAL_POS = [0, -20, -40]
 MOVE_DIST = 20
+RIGHT = 0
+UP = 90
+LEFT = 180
+DOWN = 270
 
 class Snake:
     def __init__(self):
@@ -27,14 +31,14 @@ class Snake:
     
     # The next 4 methods only refer to first block, telling it to change heading depending on arrow click
     def up(self):
-        if self.head.heading() != 270:
-            self.head.setheading(90)
+        if self.head.heading() != DOWN:
+            self.head.setheading(UP)
     def down(self):
-        if self.head.heading() != 90:
-            self.head.setheading(270)
+        if self.head.heading() != UP:
+            self.head.setheading(DOWN)
     def left(self):
-        if self.head.heading() != 0:
-            self.head.setheading(180)
+        if self.head.heading() != RIGHT:
+            self.head.setheading(LEFT)
     def right(self):
-        if self.head.heading() != 180:
-            self.head.setheading(0)
+        if self.head.heading() != LEFT:
+            self.head.setheading(RIGHT)
