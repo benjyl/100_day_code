@@ -35,8 +35,6 @@ while game_on:
     
     # detect food collision
     if food.distance((sk.head.pos())) <15:
-        print("nom nom")
-        print(food.distance((sk.head.pos())))
         food.move_pos() # move food to new position if eaten
         sk.extend()
         scoreboard.update_score()
