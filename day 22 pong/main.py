@@ -23,14 +23,19 @@ s_h = screen.window_height()
 s_w = screen.window_width()
 screen.bgcolor("black")
 screen.title("Pong")
+
+
+# create pong pieces
 centre = Turtle()
 create_centre(s_h/2)
-ball = Ball() 
-screen.listen()
 
+ball = Ball(s_w/2, s_h/2) 
 
 right_paddle = Paddle(s_w/2-50)
 left_paddle = Paddle(-s_w/2 + 50)
+screen.listen()
+
+
 
 screen.onkey(right_paddle.up, "Up")
 screen.onkey(right_paddle.down, "Down")
@@ -43,6 +48,8 @@ game_on = True
 while game_on:
     screen.update()
     time.sleep(0.1)
-    ball.move()
+    ball.move(s_w/2, s_h/2)
+    if abs(ball.ycor()) > s_h/2:
+        ball.bounce()
 
 screen.exitonclick()
