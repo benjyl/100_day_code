@@ -1,6 +1,7 @@
 from turtle import Turtle, Screen
 from paddle import Paddle
 import time
+from ball import Ball
 
 def create_centre(height):
     centre.color("white")
@@ -24,7 +25,7 @@ screen.bgcolor("black")
 screen.title("Pong")
 centre = Turtle()
 create_centre(s_h/2)
-
+ball = Ball() 
 screen.listen()
 
 
@@ -42,5 +43,6 @@ game_on = True
 while game_on:
     screen.update()
     time.sleep(0.1)
+    ball.move()
 
 screen.exitonclick()
