@@ -31,3 +31,7 @@ class Ball(Turtle):
     
     def hit_paddle(self):
         self.x_inc *= -1       
+    
+    def reset_pos(self):
+        self.x, self.y = 0,0
+        self.x_inc *= -1 # make ball go to other player
