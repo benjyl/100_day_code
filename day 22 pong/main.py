@@ -8,7 +8,7 @@ def create_centre(height):
     centre.hideturtle()
     centre.pensize(8)
     centre.goto(x=0, y=height)
-    screen.tracer(0) 
+    screen.tracer(0) # turns off animation for moving objects to position, manual screen update required
     while centre.position()[1]> -height:
         centre.pd()
         centre.setheading(270)
@@ -29,9 +29,12 @@ screen.listen()
 
 
 right_paddle = Paddle(s_w, s_w/2-50)
+left_paddle = Paddle(s_w, -s_w/2 + 50)
 
 screen.onkey(right_paddle.up, "Up")
 screen.onkey(right_paddle.down, "Down")
+screen.onkey(left_paddle.up, "w")
+screen.onkey(left_paddle.down, "s")
 screen.update()
 
 game_on = True
