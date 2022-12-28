@@ -11,14 +11,16 @@ class Paddle(Turtle):
         self.pu()
         self.resizemode("user")
         self.shape("square")
-        self.setheading(90)
-        self.shapesize(stretch_len=5)
-        self.goto(x=x_pos, y=0)
+        self.shapesize(stretch_len=1, stretch_wid=5)
+        self.y = 0 # y position of paddle
+        self.x = x_pos
+        self.goto(x=self.x, y=self.y)
+
     
     def up(self):
-        self.setheading(UP)
-        self.fd(MOVE_DIST)
+        self.y +=20
+        self.goto(self.x, self.y)
     
     def down(self):
-        self.setheading(DOWN)
-        self.fd(MOVE_DIST)
+        self.y -=20
+        self.goto(self.x, self.y)
