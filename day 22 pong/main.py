@@ -19,20 +19,20 @@ def create_centre(height):
         
 screen = Screen()
 screen.setup(width=1.0, height=1.0) # float takes up whole screen
-s_h = screen.window_height()
-s_w = screen.window_width()
+s_h = screen.window_height()/2
+s_w = screen.window_width()/2
 screen.bgcolor("black")
 screen.title("Pong")
 
 
 # create pong pieces
 centre = Turtle()
-create_centre(s_h/2)
+create_centre(s_h)
 
-ball = Ball(s_w/2, s_h/2) 
+ball = Ball(s_w, s_h) 
 
-right_paddle = Paddle(s_w/2-50)
-left_paddle = Paddle(-s_w/2 + 50)
+right_paddle = Paddle(s_w-50)
+left_paddle = Paddle(-s_w + 50)
 screen.listen()
 
 
@@ -47,9 +47,16 @@ game_on = True
 
 while game_on:
     screen.update()
-    time.sleep(0.1)
-    ball.move(s_w/2, s_h/2)
-    if abs(ball.ycor()) > s_h/2:
-        ball.bounce()
-
+    time.sleep(0.05)
+    ball.move(s_w, s_h)
+    #detect wall collision
+    if abs(ball.ycor()) > s_h - 40:
+        ball.hit_wall()
+    
+    # detect paddle collision
+    if abs(ball.xcor()) > s_w - 70 and (ball.distance(left_paddle) < 70 or ball.distance(right_paddle)<70):
+        ball.hit_paddle()
+    
+    
+        
 screen.exitonclick()

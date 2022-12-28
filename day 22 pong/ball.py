@@ -26,5 +26,8 @@ class Ball(Turtle):
         self.goto(self.x, self.y)
     
 
-    def bounce(self):
-        self.y_inc = - self.y_inc            
+    def hit_wall(self):
+        self.y_inc *= -1     
+    
+    def hit_paddle(self):
+        self.x_inc *= -1       
