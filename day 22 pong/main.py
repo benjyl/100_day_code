@@ -2,6 +2,7 @@ from turtle import Turtle, Screen
 from paddle import Paddle
 import time
 from ball import Ball
+from scoreboard import Scoreboard
 
 def create_centre(height):
     centre.color("white")
@@ -30,7 +31,7 @@ centre = Turtle()
 create_centre(s_h)
 
 ball = Ball(s_w, s_h) 
-
+scoreboard = Scoreboard()
 right_paddle = Paddle(s_w-50)
 left_paddle = Paddle(-s_w + 50)
 screen.listen()
@@ -57,6 +58,14 @@ while game_on:
     if abs(ball.xcor()) > s_w - 70 and (ball.distance(left_paddle) < 70 or ball.distance(right_paddle)<70):
         ball.hit_paddle()
     
+    # right paddle misses
+    if ball.xcor() > s_w - 10:
+        scoreboard.update_score(left=True)
+        ball.reset_pos()
+    # left paddle misses
+    elif ball.xcor() < -(s_w-10):
+        scoreboard.update_score() 
+        ball.reset_pos()
     
-        
+    
 screen.exitonclick()
