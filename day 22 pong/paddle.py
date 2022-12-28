@@ -5,7 +5,7 @@ DOWN = 270
 MOVE_DIST = 20
 
 class Paddle(Turtle):
-    def __init__(self, screenwidth, x_pos) -> None:
+    def __init__(self, x_pos) -> None:
         super().__init__()
         self.color("white")
         self.pu()

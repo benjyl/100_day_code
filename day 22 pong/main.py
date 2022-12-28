@@ -28,8 +28,8 @@ create_centre(s_h/2)
 screen.listen()
 
 
-right_paddle = Paddle(s_w, s_w/2-50)
-left_paddle = Paddle(s_w, -s_w/2 + 50)
+right_paddle = Paddle(s_w/2-50)
+left_paddle = Paddle(-s_w/2 + 50)
 
 screen.onkey(right_paddle.up, "Up")
 screen.onkey(right_paddle.down, "Down")
