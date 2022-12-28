@@ -12,6 +12,7 @@ class Ball(Turtle):
         self.y = 0
         self.x_inc = 10 # movement increment in x dir
         self.y_inc = 10 # movement increment in y dir
+        self.sleep = 0.05
         
         
     # #set heading to make ball go in random direction when start
@@ -30,8 +31,10 @@ class Ball(Turtle):
         self.y_inc *= -1     
     
     def hit_paddle(self):
-        self.x_inc *= -1       
+        self.x_inc *= -1
+        self.sleep *= 0.9   
     
     def reset_pos(self):
         self.x, self.y = 0,0
         self.x_inc *= -1 # make ball go to other player
+        self.sleep = 0.05
