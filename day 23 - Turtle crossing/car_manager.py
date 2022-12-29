@@ -17,7 +17,7 @@ class CarManager:
             self.cars.append(Car(x_pos=random.randrange(-300, 300, 50), move_dist=self.move_dist))
         
     
-    def gen_cars(self):
+    def gen_car(self):
         # if random.choices([False, True], weights=[0.9999, 0.0001]):
         self.cars.append(Car(move_dist=self.move_dist))
     
@@ -30,7 +30,7 @@ class CarManager:
                 
     def detect_collision(self, turtle):
         for car in self.cars:
-            if abs(turtle.ycor() - car.ycor()) < 20 and car.distance(turtle) < 25:
+            if car.distance(turtle) < 25:
                 print("Collision detected")
                 return False
         return True
