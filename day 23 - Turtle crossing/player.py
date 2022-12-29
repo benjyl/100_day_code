@@ -20,6 +20,6 @@ class Player(Turtle):
         Check whether reached top of screen 
         """
         self.fd(MOVE_DISTANCE)
-        if self.ycor()>FINISH_LINE_Y:
-            self.goto(STARTING_POSITION)
-            self.level += 1
+    
+    def new_level(self):
+        self.goto(STARTING_POSITION)
