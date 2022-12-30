@@ -13,7 +13,6 @@ class Snake:
        self.segments = []
        self.create_snake()
        self.head = self.segments[0]
-       self.tail = self.segments[-1]
        
     def create_snake(self):
         for position in INITIAL_POS:
@@ -23,6 +22,18 @@ class Snake:
         for seg_num in range(len(self.segments)-1, 0, -1):
             self.segments[seg_num].goto(self.segments[seg_num-1].pos()) # move segment to the position of the segment in front of it
         self.head.fd(MOVE_DIST)
+        
+    def reset(self):
+        """
+        resets snake to start and changes removes previous snakes from screen
+        """
+        for segment in self.segments:
+            segment.ht()
+        self.segments.clear()
+        self.create_snake()
+        self.head = self.segments[0]
+        
+        
     
     def add_segment(self, position):
         # add new segment to end of snake
