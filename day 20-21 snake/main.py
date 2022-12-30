@@ -37,16 +37,16 @@ while game_on:
     if food.distance((sk.head.pos())) <15:
         food.move_pos() # move food to new position if eaten
         sk.extend()
+        scoreboard.increase_score()
         scoreboard.update_score()
         
     #Detect wall collision
     if abs(sk.head.xcor()) >290 or abs(sk.head.ycor()) >290:
-        scoreboard.game_over()
-        game_on=False
+        scoreboard.reset()
+        # game_on=False
     for segment in sk.segments[1:]:
         if sk.head.distance(segment)<10:
-            scoreboard.game_over()
-            game_on=False
+            scoreboard.reset()
         
     
 screen.exitonclick()
