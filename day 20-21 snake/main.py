@@ -43,10 +43,12 @@ while game_on:
     #Detect wall collision
     if abs(sk.head.xcor()) >290 or abs(sk.head.ycor()) >290:
         scoreboard.reset()
+        sk.reset()
         # game_on=False
     for segment in sk.segments[1:]:
         if sk.head.distance(segment)<10:
             scoreboard.reset()
+            sk.reset()
         
     
 screen.exitonclick()
