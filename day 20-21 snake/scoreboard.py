@@ -7,17 +7,14 @@ class Scoreboard(Turtle):
     def __init__(self) -> None:
         super().__init__()
         self.score = 0
-        self.highscore = self.get_prev_high_score()
+        with open("data.txt") as data:
+            self.highscore = int(data.read())
         self.color("white")
         self.pu()
         self.ht()  # hide turtle
         self.setpos(x=0, y=270)
         self.write(
             f"Score: {self.score} High Score: {self.highscore}", align=ALIGN, font=FONT)
-
-    def get_prev_high_score(self):
-        with open("data.txt") as data:
-            return int(data.read())
 
     def update_score(self):
         self.clear()  # clear writing every time score updates
