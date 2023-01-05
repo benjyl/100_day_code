@@ -32,6 +32,8 @@ while len(correct_guesses) <50:
     answer_state = screen.textinput(title=f"{len(correct_guesses)}/50 States guessed correctly", prompt="What's the name of another state?").title()
     
     if answer_state == "Exit":
+        states_missed = data[~data.state.isin(correct_guesses)]
+        states_missed.to_csv("./day 25/us-states-game-start/states_to_learn.csv")
         break
     
     if answer_state in data["state"].unique() and answer_state not in correct_guesses: # could also turn data["state"] into list
@@ -45,5 +47,3 @@ while len(correct_guesses) <50:
     elif answer_state in data["state"].unique() and answer_state in correct_guesses:
         print("already guessed")
 
-states_missed = data[~data.state.isin(correct_guesses)]
-states_missed.to_csv("./day 25/us-states-game-start/states_to_learn.csv")
