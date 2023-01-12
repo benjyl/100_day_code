@@ -17,7 +17,7 @@ path = os.getcwd()
 
 # # pandas mean
 # print(temps.mean())
-# #max 
+# #max
 # max_temp = temps.max()
 # # print row with max temp, condition
 # print(data[data.temp == max_temp])
@@ -38,15 +38,15 @@ path = os.getcwd()
 # student_dataframe.to_csv("test_data.csv")
 # print(student_dataframe)
 
-data =pd.read_csv(path+"\\day 25\\central_park_squirrel.csv")
+data = pd.read_csv(path + "\\day 25\\central_park_squirrel.csv")
 fur_colours = data["Primary Fur Color"].dropna().unique()
 
-colour_dict = {"colours":[], "count":[]}
+colour_dict = {"colours": [], "count": []}
 for colour in fur_colours:
     data_colour = data[data["Primary Fur Color"] == colour]
     colour_dict["colours"].append(colour)
     colour_dict["count"].append(len(data_colour))
-    
+
 print(colour_dict)
 colour_df = pd.DataFrame(colour_dict)
-colour_df.to_csv(path+"\\day 25\\colour_data.csv")
+colour_df.to_csv(path + "\\day 25\\colour_data.csv")

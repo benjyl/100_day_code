@@ -11,15 +11,14 @@ class Player(Turtle):
         self.shape("turtle")
         self.pu()
         self.goto(STARTING_POSITION)
-        self.setheading(90) # face north
-    
+        self.setheading(90)  # face north
+
     def move(self):
         """move player forward when up button hit
-        Check whether reached top of screen 
+        Check whether reached top of screen
         """
         self.fd(MOVE_DISTANCE)
-    
+
     def new_level(self):
-        """reset player position when get to top
-        """
+        """reset player position when get to top"""
         self.goto(STARTING_POSITION)
