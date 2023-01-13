@@ -16,6 +16,7 @@
 # finally: # happens whatever occurs
 #     raise TypeError("This is self-made error") # raises error 
 
+'''
 height = float(input("Height: "))
 weight = float(input("weight: "))
 
@@ -24,3 +25,21 @@ if height > 2.7:
 
 bmi = weight / (height**2)
 print(bmi)
+
+'''
+
+# Index error challenge
+fruits = ["Apple", "Pear", "Orange"]
+
+#TODO: Catch the exception and make sure the code runs without crashing.
+def make_pie(index):
+    try:
+        fruit = fruits[index]
+    except IndexError:
+        print("Fruit pie")
+    else:
+        print(fruit + " pie")
+
+
+make_pie(4)
+
