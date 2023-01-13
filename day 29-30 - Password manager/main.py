@@ -97,6 +97,7 @@ def save_pd():
         #else:
         #    messagebox.showinfo(message="No password information stored")
 def find_password():
+    website = web_entry.get().upper()
     try:
         with open("password.json") as file:
             data = json.load(file)
@@ -105,16 +106,16 @@ def find_password():
         messagebox.showinfo(message="No password file found")
     
     else:
-        website = web_entry.get().upper()
-        
+             
         try:
-            web_data= data[website]
+            email= data[website]["email"]
+            password = data[website]["password"]
         
         except KeyError:
             messagebox.showinfo(message="No details for this website exists")
         
         else:
-            messagebox.showinfo(message=f"Website: {website} \nEmail: {web_data['email']} \nPassword: {web_data['password']}")
+            messagebox.showinfo(message=f"Website: {website} \nEmail: {email} \nPassword: {password}")
         
         
     
