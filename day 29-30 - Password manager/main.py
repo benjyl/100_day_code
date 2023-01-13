@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from random import choice, randint, shuffle
 import pyperclip
+import json
 
 # https://tkdocs.com/tutorial/widgets.html#entry - tkinter tutorials
 
@@ -42,32 +43,78 @@ def gen_password():
 def get_pd_vals():
     """obtains website, email and password used
     """
-    web = web_entry.get()
+    web = web_entry.get().upper()
     email = email_entry.get()
     password = password_entry.get()
     return web, email, password
+
+def reset_screen():
+    web_entry.delete(0, "end")
+    email_entry.delete(0, "end")
+    email_entry.insert(0, "benjy.lovat@gmail.com") # go back to original input
+    password_entry.delete(0, "end")
 
 
 def save_pd():
 
     web, email, password = get_pd_vals()
+    new_data = {
+        web:{
+            "email": email,
+            "password": password,
+        }
+    }
    
     # check for empty fields
     if web == "" or password=="":
         messagebox.showinfo("Error!", message="You must fill in all fields")
     else:
         # check if password info ok
-        yes = messagebox.askyesno(message=f"web: {web}\nemail: {email}\npassword: {password}\nAre these correct?")
-        if yes:  
-            with open("password.txt", "a") as file:
-                file.write(f"{web} | {email} | {password}\n")
-            messagebox.showinfo(message="Password information stored")
-            web_entry.delete(0, "end")
-            email_entry.delete(0, "end")
-            email_entry.insert(0, "benjy.lovat@gmail.com") # go back to original input
-            password_entry.delete(0, "end")
+        #yes = messagebox.askyesno(message=f"web: {web}\nemail: {email}\npassword: {password}\nAre these correct?")
+        #if yes:  
+        
+        # file may not exist
+        try:
+            with open("password.json", "r") as file:
+            # read old data
+                data = json.load(file) # turns into python dictionary
+            # update old data with new data
+        
+        except FileNotFoundError:
+            data = new_data # just create data variable from new data
+        
         else:
-            messagebox.showinfo(message="No password information stored")
+            data.update(new_data)
+        
+        # open json file, if doesn't exist, will create
+        with open("password.json", 'w') as file:
+            #save updated data
+            json.dump(data, file, indent=4) # data + location to dump data + indent data
+            messagebox.showinfo(message="Password information stored")     
+       
+        reset_screen()
+        
+        #else:
+        #    messagebox.showinfo(message="No password information stored")
+def find_password():
+    try:
+        with open("password.json") as file:
+            data = json.load(file)
+   
+    except FileNotFoundError:
+        messagebox.showinfo(message="No password file found")
+    
+    else:
+        website = web_entry.get().upper()
+        
+        try:
+            web_data= data[website]
+        
+        except KeyError:
+            messagebox.showinfo(message="No details for this website exists")
+        
+        else:
+            messagebox.showinfo(message=f"Website: {website} \nEmail: {web_data['email']} \nPassword: {web_data['password']}")
         
         
     
@@ -94,8 +141,8 @@ password_label = Label(text="Password:", bg="white")
 password_label.grid(row=3, column=0)
 
 # User Text entries
-web_entry = Entry(width=51)
-web_entry.grid(row=1, column=1, columnspan=2)
+web_entry = Entry(width=33)
+web_entry.grid(row=1, column=1)
 web_entry.focus()  # gets cursor into web_entry on start up
 
 email_entry = Entry(width=51)
@@ -106,6 +153,9 @@ password_entry.grid(row=3, column=1)
 email_entry.insert(0, "benjy.lovat@gmail.com")
 
 # buttons
+search = Button(text="Search", bg="white", command=find_password, width=14)
+search.grid(row=1, column=2)
+
 gen_pass = Button(text="Generate Password", bg="white", command=gen_password)
 gen_pass.grid(row=3, column=2)
 
