@@ -8,7 +8,6 @@ for (key, value) in student_dict.items():
     pass
 
 
-
 student_data_frame = pandas.DataFrame(student_dict)
 
 # Loop through rows of a data frame
