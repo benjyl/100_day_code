@@ -6,16 +6,16 @@ phonetic_df = pandas.read_csv("nato_phonetic_alphabet.csv")
 phonetic_dict = {row.letter: row.code for (index, row) in phonetic_df.iterrows()}
 print(phonetic_dict)
 
-user_input = input("Input a word and receive the phonetic equivalent:\n").upper()
-valid = False
 
-
-while not valid:
+def generate_phonetic():
+    user_input = input("Input a word and receive the phonetic equivalent:\n").upper()
     try:
         phonetic_list = [phonetic_dict[i] for i in user_input]
     except KeyError:
         print("Sorry, only give letters in the alphabet please")
-        user_input = input("Input a word and receive the phonetic equivalent:\n").upper()
+        generate_phonetic()
     else:
         print(phonetic_list)
-        valid = True
+
+generate_phonetic()
+    
