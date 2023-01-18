@@ -8,29 +8,25 @@ from email.mime.text import MIMEText
 MY_EMAIL = "jstew613@gmail.com"
 PASSWORD = "ioylffhmzmwwrmnq"
 
-# 1. Update the birthdays.csv
+
 df = pd.read_csv("birthdays.csv")
 today = dt.datetime.now()
-# print(df["month"])
 
-
-# 2. Check if today matches a birthday in the birthdays.csv
+# Check if today matches a birthday in the birthdays.csv
 for (index, row) in df.iterrows():
-    # print(row["month"], row["day"])
-    # print(today.month, today.day)
     if row["month"] == today.month and row["day"] == today.day:
         person = row
 
 recip_email = person["email"]
 
-# 3. If step 2 is true, pick a random letter from letter templates and replace the [NAME] with the person's actual name from birthdays.csv
+#pick a random letter from letter templates and replace the [NAME] with the person's actual name from birthdays.csv
 letter_no = random.randint(1,3)
 print(letter_no)
 with open(f"./letter_templates/letter_{letter_no}.txt", 'r+') as message:
-    bd_wish = message.readlines()
-    
-personalised = [line.replace("[NAME]", person["name"]) for line in bd_wish]
-personalised = "".join(personalised) # Needs to be string for MIMEText to encode it
+    bd_wish = message.read() # keeps everything as string
+
+personalised = bd_wish.replace("[NAME]", person["name"])
+
     
     
 # 4. Send the letter generated in step 3 to that person's email address.
