@@ -4,40 +4,54 @@ import random
 
 BACKGROUND_COLOR = "#B1DDC6"
 #---------------------------------Reading csv------------------------
-data = pd.read_csv("./data/french_words.csv")
-to_learn = data.to_dict("records")
-
-#------------------------------display new word----------------------
-def new_word():
+# check if words_to_learn file exists and if so, save to data otherwise use the french_words.csv
+try:
+    file = open("words_to_learn.csv")
+    data = pd.read_csv(file)
+    to_learn = data.to_dict("records")
+    print("Success")
+except FileNotFoundError:
+    data = pd.read_csv("./data/french_words.csv")
+    to_learn = data.to_dict("records")
+    print("fail")
     
-    word = random.choice(to_learn) # gets random French word + translation
-    front_word = word["French"]
-    back_word = word["English"]
+current_card = {}
+#------------------------------display new word----------------------
+def new_word(known=False):
+    global current_card, flip_timer # allows me to update current card so stored for use in other functions
+    
+    frame.after_cancel(flip_timer)
+    current_card = random.choice(to_learn) # gets random French word + translation
     canvas.itemconfig(canvas_img, image=front_img)
     canvas.itemconfig(canvas_title, text="French",font=("Arial", 40, "italic"), fill="black")
-    canvas.itemconfig(canvas_word, text=front_word, font=("Arial", 60, "bold"), fill="black")
-    reverse = canvas.after(3000, reverse_card, back_word)
-    # canvas.after_cancel(reverse)
+    canvas.itemconfig(canvas_word, text=current_card["French"], font=("Arial", 60, "bold"), fill="black")
+    #
+    flip_timer = canvas.after(3000, func=reverse_card)
+    if known:
+        to_learn.remove(current_card)
 
-def reverse_card(english):
-    canvas.itemconfig(canvas_img, image=back_image)
-    # canvas_title = canvas.create_text(400, 150, text="English", font=("Arial", 40, "italic"), fill="white")
-    # canvas_word = canvas.create_text(400, 263, text=english, font=("Arial", 60, "bold"), fill="white")
-    canvas.itemconfig(canvas_title, text="English", fill="white")
-    canvas.itemconfig(canvas_word, text=english, fill="white")
-    
-    
-    
+def reverse_card():
+    # get error when start and wait more than 3s, no english in dictionary yet so check for key error and do nothing
+    try:
+        canvas.itemconfig(canvas_word, text=current_card["English"], fill="white")
+    except KeyError:
+        pass
+    else:
+        canvas.itemconfig(canvas_img, image=back_image)
+        canvas.itemconfig(canvas_title, text="English", fill="white")
 
 #----------------------------------UI Setup--------------------------
 frame = Tk()
 frame.title("Flash cards")
 frame.config(bg=BACKGROUND_COLOR, padx=50, pady=50)
 
+flip_timer = frame.after(3000, func=reverse_card) # required so can use after_cancel at start of each new word run
+
+# canvas image background setup
 canvas = Canvas(width=800, height=526, bg=BACKGROUND_COLOR, highlightthickness=0)
-front_img = PhotoImage(file="./images/card_front.png")
-back_image = PhotoImage(file="./images/card_back.png")
-canvas_img = canvas.create_image(400, 263, image=front_img)
+front_img = PhotoImage(file="./images/card_front.png") # background for french
+back_image = PhotoImage(file="./images/card_back.png") # background for english
+canvas_img = canvas.create_image(400, 263, image=front_img) # canvas image
 
 # add text to canvas
 canvas_title = canvas.create_text(400, 150, text="Title", font=("Arial", 40, "italic"))
@@ -46,7 +60,7 @@ canvas.grid(row=0, column=0, columnspan=2)
 
 # tick button
 tick = PhotoImage(file="./images/right.png")
-tick_button = Button(image=tick, bg=BACKGROUND_COLOR, command=new_word)
+tick_button = Button(image=tick, bg=BACKGROUND_COLOR, command=lambda: new_word(True))
 tick_button.grid(column=1, row=1)
 
 # cross button
@@ -56,3 +70,6 @@ tick_button.grid(column=0, row=1)
 
 
 frame.mainloop()
+
+to_learn_data = pd.DataFrame.from_dict(to_learn)
+to_learn_data.to_csv("words_to_learn.csv", index=False,  encoding = 'utf-8-sig') # encoding to stop accents on letters having issues
