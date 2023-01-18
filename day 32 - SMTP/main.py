@@ -3,9 +3,9 @@ import random
 import smtplib
 from email.mime.text import MIMEText
 
-my_email = "jstew613@gmail.com"
-password = "ioylffhmzmwwrmnq"
-recip_email = "jstew613@yahoo.com"
+MY_EMAIL = "jstew613@gmail.com"
+PASSWORD = "ioylffhmzmwwrmnq"
+RECIP_EMAIL = "jstew613@yahoo.com"
 
 now=dt.datetime.now()
 weekday = now.weekday()
@@ -16,16 +16,16 @@ if weekday == 2:
         qotd = random.choice(quotes)
         print(qotd)
 # method to stop mail going to spam
-message = MIMEText(qotd)
+message = MIMEText(qotd) # take random quote of the day
 message["subject"] = "quote of the day"
-message["from"] = my_email
-message["To"] = recip_email
+message["from"] = MY_EMAIL
+message["To"] = RECIP_EMAIL
 
 with smtplib.SMTP("smtp.gmail.com",587) as connection: # 587 - port number to successfully connect for email
     connection.starttls() # tls (transport layer security-secure connection to email server)
-    connection.login(user=my_email, password=password)
-    connection.sendmail(from_addr=my_email, 
-                        to_addrs=recip_email, 
+    connection.login(user=MY_EMAIL, password=PASSWORD)
+    connection.sendmail(from_addr=MY_EMAIL, 
+                        to_addrs=MY_EMAIL, 
                         msg=message.as_string())
 '''
 # previous method where sent to spam of receiver
