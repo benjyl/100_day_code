@@ -19,6 +19,14 @@ date_list = [str(yesterday.date() - timedelta(days=x)) for x in range(20)]
 # print(date_list)
 
 def get_news(date):
+    """_summary_
+
+    Args:
+        date (string): get current date
+
+    Returns:
+        news_titles(list), news_urls(list): list of both main stories and urls for company7 
+    """
     news_url = ('https://newsapi.org/v2/everything?'
             f'q={COMPANY_NAME}&'
             'searchIn=title,description&'
@@ -29,7 +37,7 @@ def get_news(date):
     news_response = requests.get(news_url)
     news_response.raise_for_status()
     news_data = news_response.json()
-    news = news_data["articles"][:3]
+    news = news_data["articles"][:3] # get first 3 articles
     print(news)
     # for article in news:
     #     title = article["title"]
@@ -40,14 +48,34 @@ def get_news(date):
     return news_titles, news_urls
 
 def stock_change(data, current_day, prev_day):
+    """_summary_
+
+    Args:
+        data (json): stock json data 
+        current_day (string): current day
+        prev_day (string): previous day
+
+    Returns:
+        percent_change (float): % diff in stock price between 2 days
+    """
     day_close_price = float(data[f"{current_day}"]["4. close"])
-    print(day_close_price)
     prev_day_close_price = float(data[f"{prev_day}"]["4. close"])
     percent_change = (day_close_price - prev_day_close_price)/prev_day_close_price * 100
     return percent_change
 
-def send_message(news_titles, urls):
-    message = MIMEText(f"TSLA: 🔺{round(percent_change,1)}%\n{news_titles[0]}: {urls[0]}\n{news_titles[1]}: {urls[1]}\n{news_titles[2]}: {urls[2]}")
+def send_message(news_titles, urls, diff):
+    """_summary_
+
+    Args:
+        news_titles (list): news articles list
+        urls (list): news urls list
+        diff (float): stock percentage change between 2 days
+    """
+    if diff >0:
+        up_down = "🔺"
+    else:
+        up_down="🔻"
+    message = MIMEText(f"TSLA: {up_down}{round(percent_change,1)}%\n{news_titles[0]}: {urls[0]}\n{news_titles[1]}: {urls[1]}\n{news_titles[2]}: {urls[2]}")
     message["subject"] = "Tesla stock update"
     message["from"] = MY_EMAIL
     message["To"] = RECIP_EMAIL
@@ -80,7 +108,7 @@ for i in range(len(date_list)-1):
             news_titles, urls = get_news(curr_date)
             print(news_titles)
             
-            send_message(news_titles, urls)
+            send_message(news_titles, urls, percent_change)
             
     except KeyError:
         print(f"No trading data for {date_list[i]}")
