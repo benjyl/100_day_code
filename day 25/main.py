@@ -39,7 +39,9 @@ path = os.getcwd()
 # print(student_dataframe)
 
 data = pd.read_csv(path + "\\day 25\\central_park_squirrel.csv")
-fur_colours = data["Primary Fur Color"].dropna().unique() # finds unique fur colours not included NaN
+fur_colours = (
+    data["Primary Fur Color"].dropna().unique()
+)  # finds unique fur colours not included NaN
 
 colour_dict = {"colours": [], "count": []}
 for colour in fur_colours:

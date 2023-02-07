@@ -22,12 +22,62 @@ def show_config(widget):
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def gen_password():
-    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 
-               'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 
-               'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 
-               'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
+    letters = [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+    ]
+    numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    symbols = ["!", "#", "$", "%", "&", "(", ")", "*", "+"]
 
     password_list = []
 
@@ -37,24 +87,25 @@ def gen_password():
     shuffle(password_list)
 
     password = "".join(password_list)
-    password_entry.delete(0, 'end')
+    password_entry.delete(0, "end")
     password_entry.insert(0, password)
-    pyperclip.copy(password) # saves password to clipboard
+    pyperclip.copy(password)  # saves password to clipboard
     messagebox.showinfo(message="Password saved to clipboard")
+
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def get_pd_vals():
-    """obtains website, email and password used
-    """
+    """obtains website, email and password used"""
     web = web_entry.get().upper()
     email = email_entry.get()
     password = password_entry.get()
     return web, email, password
 
+
 def reset_screen():
     web_entry.delete(0, "end")
     email_entry.delete(0, "end")
-    email_entry.insert(0, "benjy.lovat@gmail.com") # go back to original input
+    email_entry.insert(0, "benjy.lovat@gmail.com")  # go back to original input
     password_entry.delete(0, "end")
 
 
@@ -62,60 +113,66 @@ def save_pd():
 
     web, email, password = get_pd_vals()
     new_data = {
-        web:{
+        web: {
             "email": email,
             "password": password,
         }
     }
-   
+
     # check for empty fields
-    if web == "" or password=="":
+    if web == "" or password == "":
         messagebox.showinfo("Error!", message="You must fill in all fields")
     else:
         # check if password info ok
-        #yes = messagebox.askyesno(message=f"web: {web}\nemail: {email}\npassword: {password}\nAre these correct?")
-        #if yes:  
-        
+        # yes = messagebox.askyesno(message=f"web: {web}\nemail: {email}\npassword: {password}\nAre these correct?")
+        # if yes:
+
         # file may not exist
         try:
             with open("password.json", "r") as file:
-            # read old data
-                data = json.load(file) # turns into python dictionary
+                # read old data
+                data = json.load(file)  # turns into python dictionary
             # update old data with new data
-        
+
         except FileNotFoundError:
-            data = new_data # just create data variable from new data
-        
+            data = new_data  # just create data variable from new data
+
         else:
             data.update(new_data)
-        
+
         # open json file, if doesn't exist, will create
-        with open("password.json", 'w') as file:
-            #save updated data
-            json.dump(data, file, indent=4) # data + location to dump data + indent data
-            messagebox.showinfo(message="Password information stored")     
-       
+        with open("password.json", "w") as file:
+            # save updated data
+            json.dump(
+                data, file, indent=4
+            )  # data + location to dump data + indent data
+            messagebox.showinfo(message="Password information stored")
+
         reset_screen()
-        
-        #else:
+
+        # else:
         #    messagebox.showinfo(message="No password information stored")
+
+
 def find_password():
     website = web_entry.get().upper()
     try:
         with open("password.json") as file:
             data = json.load(file)
-   
+
     except FileNotFoundError:
         messagebox.showinfo(message="No password file found")
-    
+
     else:
         if website in data:
-            email= data[website]["email"]
+            email = data[website]["email"]
             password = data[website]["password"]
-            messagebox.showinfo(message=f"Website: {website} \nEmail: {email} \nPassword: {password}")
+            messagebox.showinfo(
+                message=f"Website: {website} \nEmail: {email} \nPassword: {password}"
+            )
         else:
             messagebox.showinfo(message="No details for this website exists")
-        
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
