@@ -24,7 +24,7 @@ class DataManager:
             data = requests.get(url=SHEETY_ENDPOINT).json()
             # print(data["prices"])
             self.flight_limits = data["prices"]
-            print(type(self.flight_limits))
+            # print(type(self.flight_limits))
             return self.flight_limits
 
     def add_iata(self):

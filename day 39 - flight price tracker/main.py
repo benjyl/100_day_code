@@ -27,20 +27,10 @@ if add_iata:
     data_manager.flight_limits = sheet_data
     data_manager.add_iata()
 
-# sheet_data = [{"city": "Paris", "iataCode": "PAR", "lowestPrice": 200},
-#               {"city": "Berlin", "iataCode": "BER", "lowestPrice": 42},
-#               {"city": "Tokyo", "iataCode": "TYO","lowestPrice": 485},
-#               {"city": "Sydney","iataCode": "SYD", "lowestPrice": 2000},
-#               {"city": "Istanbul","iataCode": "IST", "lowestPrice": 95},
-#               {"city": "Kuala Lumpur","iataCode": "KUL", "lowestPrice": 1500},
-#               {"city": "New York","iataCode": "NYC", "lowestPrice": 1200},
-#               {"city": "San Francisco","iataCode": "SFO", "lowestPrice": 260},
-#               {"city": "Cape Town","iataCode": "CPT", "lowestPrice": 378},
-#               ]
-
 flight_city_data = flight_searcher.find_flight(sheet_data)
-print(flight_city_data)
+print(f"flight city data: {type(flight_city_data)}")
 city_prices = flight_data.sort_flight_data(flight_city_data)
+print("city prices: ", type(city_prices))
 print(len(city_prices))
 # print(flight_city_data["data"])
 # countries_found = [flight_city_data["data"][i]["cityTo"] for i in range(len(flight_city_data["data"]))]

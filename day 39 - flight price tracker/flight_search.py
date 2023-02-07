@@ -13,6 +13,14 @@ class FlightSearch:
         pass
 
     def get_IATA_code(self, city):
+        """
+        Get IATA code for given city
+        Args:
+            city (string): City interested in getting IATA code for
+
+        Returns:
+            iata_code (string): returns the IATA code of the given city
+        """
         # input city and look for top city given, the city code is the IATA code
         params = {"term": city, "location_types": "city", "limit": 1}
         headers = {"apikey": FLIGHT_API}
@@ -26,6 +34,16 @@ class FlightSearch:
         return iata_code
 
     def find_flight(self, cities_data):
+        """
+        Search flight API for flights within next 6 months for the cities given 
+        Args:
+            cities_data (list): list of dictionaries containing city, IATA, price willing to pay
+            and row ID of data in google sheets
+
+        Returns:
+            flight response data (list): return list of dictionaries, each dictionary containing info of 
+            a flight found
+        """
         cities = [cities_data[i]["iataCode"] for i in range(len(cities_data))]
         cities = ",".join(cities)
         print(cities)
@@ -40,7 +58,7 @@ class FlightSearch:
             "fly_to": cities,
             "date_from": tomorrow,
             "date_to": next_year,
-            "nights_in_dst_from": 2,
+            "nights_in_dst_from": 7,
             "nights_in_dst_to": 28,
             "flight_type": "round",
             "one_for_city": 1,
@@ -50,7 +68,7 @@ class FlightSearch:
             "adult_hold_bag": "1",
             "adult_hand_bag": "1",
             "curr": "GBP",
-            "limit": 30,
+
         }
         flight_response = requests.get(
             url=FLIGHT_SEARCH_ENDPOINT, params=params, headers=headers

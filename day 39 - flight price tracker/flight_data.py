@@ -4,6 +4,15 @@ class FlightData:
         self.city_prices = {}
 
     def sort_flight_data(self, flight_data):
+        """
+        takes list of flight data from API, extracts city going from, destination, 
+        flight price and dates
+        Args:
+            flight_data (list): list of all flight data
+
+        Returns:
+            self.city_prices (dict): nested dictionary 
+        """
         # print(self.city_prices)
         for flight in flight_data:
             print(flight["cityTo"])
