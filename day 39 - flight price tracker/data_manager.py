@@ -7,7 +7,7 @@ class DataManager:
     def __init__(self) -> None:
         self.flight_limits = {}
         
-    def get_sheet_data(self):
+    def get_sheet_data(self, testing=True):
         """_summary_
 
         Returns:
@@ -15,11 +15,14 @@ class DataManager:
             City name, city IATA code, Lowest price - max price willing to pay 
             for a ticket
         """
-        data = requests.get(url=SHEETY_ENDPOINT).json()
-        # print(data["prices"])
-        self.flight_limits = data["prices"]
-        print(type(self.flight_limits))
-        return self.flight_limits
+        if testing:
+            print("Testing, no data to return")
+        else:
+            data = requests.get(url=SHEETY_ENDPOINT).json()
+            # print(data["prices"])
+            self.flight_limits = data["prices"]
+            print(type(self.flight_limits))
+            return self.flight_limits
     
     def add_iata(self):
         """add the IATA code for chosen cities to google doc
