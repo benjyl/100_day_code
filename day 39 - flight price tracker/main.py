@@ -10,9 +10,7 @@ sheet_data = data_manager.get_sheet_data(testing=True)
 flight_data = FlightData()
 notifications = NotificationManager()
 
-
 print(sheet_data)
-
 
 add_iata = False  # checks if IATA needs to be added to sheet data
 if sheet_data:
@@ -40,5 +38,5 @@ print(len(city_prices))
 # print(cities_flight_data["data"])
 # countries_found = [cities_flight_data["data"][i]["cityTo"] for i in range(len(cities_flight_data["data"]))]
 # print(countries_found)
-print(city_prices)
+# print(city_prices)
 notifications.check_below_limit(sheet_data, city_prices)
