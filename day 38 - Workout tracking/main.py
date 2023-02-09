@@ -18,10 +18,10 @@ sheety_endpoint = (
     "https://api.sheety.co/b2bfc39b396fc0ac0f35c7b4b25d0fc6/myWorkouts/workouts"
 )
 
-headers = {
-    "Authorization": "Basic YmVuanlsNjQ6U0RGXqNGZHNkYWY0NjM0QEFTZWQ=",
-    "Content-Type": "application/json",
-}
+# headers = {
+#     "Authorization": "Basic YmVuanlsNjQ6U0RGXqNGZHNkYWY0NjM0QEFTZWQ=",
+#     "Content-Type": "application/json",
+# }
 
 for ex in response_data["exercises"]:
     # print(ex["user_input"], ex["duration_min"],ex["nf_calories"])
@@ -34,7 +34,10 @@ for ex in response_data["exercises"]:
             "calories": ex["nf_calories"],
         }
     }
+    # sheets_response = requests.post(
+    #     url=sheety_endpoint, json=sheet_inputs, headers=headers
+    # )
     sheets_response = requests.post(
-        url=sheety_endpoint, json=sheet_inputs, headers=headers
+        url=sheety_endpoint, json=sheet_inputs
     )
     sheets_response.raise_for_status()
