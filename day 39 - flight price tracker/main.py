@@ -6,7 +6,7 @@ from notification_manager import NotificationManager
 
 data_manager = DataManager()
 flight_searcher = FlightSearch()
-sheet_data = data_manager.get_sheet_data(testing=False)
+sheet_data = data_manager.get_sheet_data(testing=True)
 flight_data = FlightData()
 notifications = NotificationManager()
 
@@ -27,13 +27,18 @@ if add_iata:
     data_manager.flight_limits = sheet_data
     data_manager.add_iata()
 
-flight_city_data = flight_searcher.find_flight(sheet_data)
-print(f"flight city data: {type(flight_city_data)}")
-city_prices = flight_data.sort_flight_data(flight_city_data)
-print("city prices: ", type(city_prices))
+cities_flight_data = []
+
+for city_data in sheet_data:
+    city_flight_data = flight_searcher.find_flight(city_data)
+    # print(city_flight_data)
+    cities_flight_data.append(city_flight_data)
+# print(f"flight city data: {type(cities_flight_data)}")
+city_prices = flight_data.sort_flight_data(cities_flight_data)
+# print("city prices: ", type(city_prices))
 print(len(city_prices))
-# print(flight_city_data["data"])
-# countries_found = [flight_city_data["data"][i]["cityTo"] for i in range(len(flight_city_data["data"]))]
+# print(cities_flight_data["data"])
+# countries_found = [cities_flight_data["data"][i]["cityTo"] for i in range(len(cities_flight_data["data"]))]
 # print(countries_found)
 print(city_prices)
 notifications.check_below_limit(sheet_data, city_prices)
