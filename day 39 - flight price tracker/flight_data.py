@@ -13,14 +13,16 @@ class FlightData:
         Returns:
             self.city_prices (dict): nested dictionary 
         """
-        # print(self.city_prices)
         for flight in flight_data:
-            print(flight["cityTo"])
-            self.city_prices[f"{flight['cityTo']}"] = {
-                "from": f"{flight['cityFrom']}-{flight['flyFrom']}",
-                "to": f"{flight['cityTo']}-{flight['flyTo']}",
-                "price": flight["price"],
-                "date_from": flight["route"][0]["local_arrival"][:10],
-                "date_to": flight["route"][1]["local_arrival"][:10],
-            }
+            if flight is not None:
+                # print("flight: ", flight)
+                print(flight["cityTo"])
+                self.city_prices[f"{flight['cityTo']}"] = {
+                    "from": f"{flight['cityFrom']}-{flight['flyFrom']}",
+                    "to": f"{flight['cityTo']}-{flight['flyTo']}",
+                    "price": flight["price"],
+                    "date_from": flight["route"][0]["local_arrival"][:10],
+                    "date_to": flight["route"][1]["local_arrival"][:10],
+                    "URL": flight["deep_link"]
+                }
         return self.city_prices
