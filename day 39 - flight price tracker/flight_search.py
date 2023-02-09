@@ -33,47 +33,47 @@ class FlightSearch:
         iata_code = flight_response_data["locations"][0]["code"]
         return iata_code
 
-    def find_flight(self, cities_data):
+    def find_flight(self, city_data):
         """
-        Search flight API for flights within next 6 months for the cities given 
+        Search flight API for flights within next year for the cities given 
         Args:
-            cities_data (list): list of dictionaries containing city, IATA, price willing to pay
+            city_data (list): list of dictionaries containing city, IATA, price willing to pay
             and row ID of data in google sheets
 
         Returns:
             flight response data (list): return list of dictionaries, each dictionary containing info of 
             a flight found
         """
-        cities = [cities_data[i]["iataCode"] for i in range(len(cities_data))]
-        cities = ",".join(cities)
-        print(cities)
+        city = city_data["iataCode"]
         today = datetime.now()
         tomorrow = (today + timedelta(days=1)).strftime("%d/%m/%Y")
-        print(tomorrow)
         next_year = (datetime.now() + relativedelta(years=1)).strftime("%d/%m/%Y")
-        print(next_year)
         headers = {"apikey": FLIGHT_API}
         params = {
             "fly_from": "LON",
-            "fly_to": cities,
+            "fly_to": city,
             "date_from": tomorrow,
             "date_to": next_year,
             "nights_in_dst_from": 7,
             "nights_in_dst_to": 28,
             "flight_type": "round",
             "one_for_city": 1,
-            "ret_from_diff_city": "False",
-            "ret_to_diff_city": "False",
-            "selected_cabins": "M",
-            "adult_hold_bag": "1",
-            "adult_hand_bag": "1",
+            # "ret_from_diff_city": "False",
+            # "ret_to_diff_city": "False",
+            # "selected_cabins": "M",
+            # "adult_hold_bag": "1",
+            # "adult_hand_bag": "1",
+            "max_stopovers":0,
             "curr": "GBP",
 
         }
         flight_response = requests.get(
             url=FLIGHT_SEARCH_ENDPOINT, params=params, headers=headers
         )
-        print()
         flight_response.raise_for_status()
-        flight_response_data = flight_response.json()["data"]
-        return flight_response_data
+        try:
+            flight_response_data = flight_response.json()["data"][0]
+            return flight_response_data
+        except IndexError:
+            print(f"No flight could be found for {city_data['city']}")
+        
