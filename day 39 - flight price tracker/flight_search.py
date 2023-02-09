@@ -49,7 +49,12 @@ class FlightSearch:
         tomorrow = (today + timedelta(days=1)).strftime("%d/%m/%Y")
         next_year = (datetime.now() + relativedelta(years=1)).strftime("%d/%m/%Y")
         headers = {"apikey": FLIGHT_API}
-        params = {
+
+        flight_found = False
+        stopovers = 0
+        while not flight_found and stopovers <= 2:
+            print(stopovers)
+            params = {
             "fly_from": "LON",
             "fly_to": city,
             "date_from": tomorrow,
@@ -63,17 +68,20 @@ class FlightSearch:
             # "selected_cabins": "M",
             # "adult_hold_bag": "1",
             # "adult_hand_bag": "1",
-            "max_stopovers":0,
+            "max_stopovers":stopovers,
             "curr": "GBP",
-
         }
-        flight_response = requests.get(
+            flight_response = requests.get(
             url=FLIGHT_SEARCH_ENDPOINT, params=params, headers=headers
         )
-        flight_response.raise_for_status()
-        try:
-            flight_response_data = flight_response.json()["data"][0]
-            return flight_response_data
-        except IndexError:
-            print(f"No flight could be found for {city_data['city']}")
-        
+            flight_response.raise_for_status()
+            try:
+                flight_response_data = flight_response.json()["data"][0]
+                # print(flight_response_data)
+                flight_found = True
+                return flight_response_data
+            except IndexError:
+                stopovers +=1
+                if stopovers == 3:
+                    print(f"No flights found to {city_data['city']}")
+            
