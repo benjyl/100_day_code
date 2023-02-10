@@ -37,7 +37,5 @@ for ex in response_data["exercises"]:
     # sheets_response = requests.post(
     #     url=sheety_endpoint, json=sheet_inputs, headers=headers
     # )
-    sheets_response = requests.post(
-        url=sheety_endpoint, json=sheet_inputs
-    )
+    sheets_response = requests.post(url=sheety_endpoint, json=sheet_inputs)
     sheets_response.raise_for_status()

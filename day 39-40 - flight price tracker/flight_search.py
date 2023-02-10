@@ -35,13 +35,13 @@ class FlightSearch:
 
     def find_flight(self, city_data):
         """
-        Search flight API for flights within next year for the cities given 
+        Search flight API for flights within next year for the cities given
         Args:
             city_data (list): list of dictionaries containing city, IATA, price willing to pay
             and row ID of data in google sheets
 
         Returns:
-            flight response data (list): return list of dictionaries, each dictionary containing info of 
+            flight response data (list): return list of dictionaries, each dictionary containing info of
             a flight found
         """
         city = city_data["iataCode"]
@@ -55,25 +55,25 @@ class FlightSearch:
         while not flight_found and stopovers <= 2:
             print(stopovers)
             params = {
-            "fly_from": "LON",
-            "fly_to": city,
-            "date_from": tomorrow,
-            "date_to": next_year,
-            "nights_in_dst_from": 7,
-            "nights_in_dst_to": 28,
-            "flight_type": "round",
-            "one_for_city": 1,
-            # "ret_from_diff_city": "False",
-            # "ret_to_diff_city": "False",
-            # "selected_cabins": "M",
-            # "adult_hold_bag": "1",
-            # "adult_hand_bag": "1",
-            "max_stopovers":stopovers,
-            "curr": "GBP",
-        }
+                "fly_from": "LON",
+                "fly_to": city,
+                "date_from": tomorrow,
+                "date_to": next_year,
+                "nights_in_dst_from": 7,
+                "nights_in_dst_to": 28,
+                "flight_type": "round",
+                "one_for_city": 1,
+                # "ret_from_diff_city": "False",
+                # "ret_to_diff_city": "False",
+                # "selected_cabins": "M",
+                # "adult_hold_bag": "1",
+                # "adult_hand_bag": "1",
+                "max_stopovers": stopovers,
+                "curr": "GBP",
+            }
             flight_response = requests.get(
-            url=FLIGHT_SEARCH_ENDPOINT, params=params, headers=headers
-        )
+                url=FLIGHT_SEARCH_ENDPOINT, params=params, headers=headers
+            )
             flight_response.raise_for_status()
             try:
                 flight_response_data = flight_response.json()["data"][0]
@@ -81,7 +81,6 @@ class FlightSearch:
                 flight_found = True
                 return flight_response_data
             except IndexError:
-                stopovers +=1
+                stopovers += 1
                 if stopovers == 3:
                     print(f"No flights found to {city_data['city']}")
-            

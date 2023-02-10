@@ -27,7 +27,7 @@ with smtplib.SMTP(
     connection.starttls()  # tls (transport layer security-secure connection to email server)
     connection.login(user=MY_EMAIL, password=PASSWORD)
     connection.sendmail(from_addr=MY_EMAIL, to_addrs=MY_EMAIL, msg=message.as_string())
-'''
+"""
 # previous method where sent to spam of receiver
 with smtplib.SMTP("smtp.gmail.com",587) as connection: # 587 - port number to successfully connect for email
     connection.starttls() # tls (transport layer security-secure connection to email server)
@@ -35,4 +35,4 @@ with smtplib.SMTP("smtp.gmail.com",587) as connection: # 587 - port number to su
     connection.sendmail(from_addr=my_email, 
                         to_addrs=recip_email, 
                         msg=f"Subject: quote of the day\n\n{qotd}")
-'''
+"""
