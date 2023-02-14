@@ -1,0 +1,28 @@
+/**********************Tag Selectors***************/
+
+body{
+    background-color: #59A608;
+}
+
+h1{
+    color: #CB17E5;
+}
+
+img:hover{
+    background-color: gold;
+}
+
+/**********************class selectors**************/
+
+.good{
+    background-color: green;
+}
+
+.bad{
+    background-color: red;
+}
+
+/*********************** ID selectors *************/
+#heading{
+    color: blue;
+}
