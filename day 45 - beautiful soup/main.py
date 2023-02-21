@@ -8,17 +8,18 @@ yc_webpage = response.text
 soup=BeautifulSoup(yc_webpage, "html.parser")
 # print(soup.title)
 
-article_tag = soup.find(name="span", class_="titleline") # get anchortag of first article
+articles = soup.find_all(name="span", class_="titleline") # get anchortag of first article
 titles = soup.select_one(".titleline a").getText()
 # print(titles)
 # gets first anchor tag of span tag, above method got both anchor tags
-article_title = article_tag.a.get_text(strip=True) # gets text of first anchor tag in span
-article_link = article_tag.a.get("href")
-article_upvote = soup.find(name="span", class_="score").getText()
-print(article_title)
-print(article_link)
-print(article_upvote)
+article_titles = [article.a.get_text(strip=True) for article in articles]
+article_links = [article.a.get("href") for article in articles]
+# get integer upvotes score
+article_upvotes = [int(score.getText().split()[0]) for score in soup.find_all(name="span", class_="score")]
 
+# print(article_titles)
+# print(article_links)
+print(article_upvotes)
 
 # print(titles)
 
