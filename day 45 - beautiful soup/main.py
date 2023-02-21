@@ -1,9 +1,11 @@
 from bs4 import BeautifulSoup
 import lxml
 import requests
+import numpy as np
 
 
 response = requests.get("https://news.ycombinator.com/news")
+
 yc_webpage = response.text
 soup=BeautifulSoup(yc_webpage, "html.parser")
 # print(soup.title)
@@ -17,9 +19,12 @@ article_links = [article.a.get("href") for article in articles]
 # get integer upvotes score
 article_upvotes = [int(score.getText().split()[0]) for score in soup.find_all(name="span", class_="score")]
 
+max_ind = np.argmax(article_upvotes)
+print(article_titles[max_ind], article_links[max_ind], article_upvotes[max_ind])
+
 # print(article_titles)
 # print(article_links)
-print(article_upvotes)
+# print(article_upvotes)
 
 # print(titles)
 
