@@ -2,9 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
-chrome_driver_path = "C:\Development\chromedriver.exe" # allows selenium use with chrome
-# service = Service("C:\Development\chromedriver.exe")
-driver = webdriver.Chrome(service=Service(chrome_driver_path)) # google chrome
+# chrome_driver_path = "C:\Development\chromedriver.exe" # allows selenium use with chrome
+service = Service("C:\Development\chromedriver.exe")
+driver = webdriver.Chrome(service=service) # google chrome
 
 # driver.get("https://www.amazon.co.uk/Wahoo-Cadence-Sensor-Android-Computers/dp/B00L9XNFPY/ref=sr_1_1_sspa?keywords=wahoo%2Bcadence%2Bsensor&qid=1677765005&sprefix=wahoo%2Bcade%2Caps%2C66&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1")
 # cost = driver.find_element(by=By.CLASS_NAME, value="a-offscreen").get_attribute("textContent") # gets product cost
@@ -21,6 +21,7 @@ driver = webdriver.Chrome(service=Service(chrome_driver_path)) # google chrome
 # Challenge: Find dates and names of upcoming events on python homepage, create dict
 driver.get("https://www.python.org/")
 # find time element inside the medium-widget event widget, replace spaces by dot, looking for time tag
+# for a class use . between every space, if id use # 
 event_dates = driver.find_elements(by=By.CSS_SELECTOR, value=".medium-widget.event-widget.last time")
 
 #method 1: using xpath containing partial href
