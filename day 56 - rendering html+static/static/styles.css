@@ -1,3 +1,4 @@
+/* css is static therefore goes in static folder */
 body{
-    background-color: purple;
+    background-color: red;
 }
