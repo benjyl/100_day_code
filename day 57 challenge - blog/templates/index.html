@@ -15,9 +15,9 @@
     {% for blog in data %}
     <div class="content">
         <div class="card">
-            <h2>{{ blog["title"] }}</h2>
-            <p class="text"> {{blog["subtitle"]}} </p>
-            <a href="{{url_for('get_blog_post', num=blog["id"])}}">Read</a>
+            <h2>{{ blog.title }}</h2>
+            <p class="text"> {{blog.subtitle}} </p>
+            <a href="{{url_for('get_blog_post', index=blog.id)}}">Read</a>
         </div>
     </div>
     {% endfor %}
