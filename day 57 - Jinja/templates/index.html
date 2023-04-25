@@ -10,6 +10,11 @@
 
 <body>
     <h1>Hello World!</h1>
+    <h2>{{ 5 * 6}}</h2>
+    <h3>Random Number: {{ num }}</h3>
+    <!--anchortag that takes python function (in quotes) in server.py as href in url_for, can take extra params too-->
+    <!--Generates hyperlink that gets to function route-->
+    <a href="{{ url_for('get_blog', num=3)}}">Go to blog</a> 
 </body>
 
 <footer>
