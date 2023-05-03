@@ -4,33 +4,27 @@ from datetime import date, timedelta
 
 app = Flask(__name__)
 
-def get_blog_data():
-    response = requests.get("https://api.npoint.io/0f66887cfe209d777703")
-    response.raise_for_status()
-    data = response.json()
-    return data
+blog_data = requests.get("https://api.npoint.io/0f66887cfe209d777703").json()
 
 @app.route('/')
-@app.route('/index.html')
+# @app.route('/index.html')
 def home():
-    blog_data = get_blog_data()
     for i in range (len(blog_data)):
         blog_data[i]["date"] = str(date.today() - timedelta(days=i*7))
     return render_template("index.html", data=blog_data)
 
-@app.route('/about.html')
+@app.route('/about')
 def about():
     return render_template("about.html")
 
-@app.route('/contact.html')
+@app.route('/contact')
 def contact_me():
     return render_template("contact.html")
 
+@app.route('/post/<int:num>')
+def post(num):
+    # blog_post = 
+    return render_template('post.html', post_data=blog_data[num-1])
+
 if __name__ == "__main__":
-    blog_data = get_blog_data()
-    for i in range (len(blog_data)):
-        blog_data[i]["date"] = str(date.today() - timedelta(days=i*7))
-    print(blog_data)
-    print(len(get_blog_data()))
-    print(date.today())
     app.run(debug=True)
