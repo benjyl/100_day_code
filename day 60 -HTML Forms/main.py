@@ -6,7 +6,7 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route("/login", methods=["POST"])
+@app.route("/receive_data", methods=["POST", "GET"])
 def receive_data():
     return f"<h1> Name: {request.form['username']}, Password: {request.form['password']} </h1>"
 
