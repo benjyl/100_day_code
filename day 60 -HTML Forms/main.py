@@ -8,7 +8,7 @@ def home():
 
 @app.route("/login", methods=["POST"])
 def receive_data():
-    return render_template('login.html', user=request.form['username'], pw=request.form["password"])
+    return f"<h1> Name: {request.form['username']}, Password: {request.form['password']} </h1>"
 
 if __name__ == "__main__":
     app.run(debug=True)
