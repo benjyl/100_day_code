@@ -4,10 +4,12 @@ from wtforms import StringField, TextAreaField, SubmitField
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.secret_key = "sdfsertsd452&"
 
 
 class LoginForm(FlaskForm):
-    pass
+    email = StringField("Email")
+    password = StringField("Password")
 
 
 @app.route("/")
@@ -15,10 +17,10 @@ def home():
     return render_template('index.html')
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    form = FlaskForm()
-    return render_template('login.html')
+    form = LoginForm()
+    return render_template('login.html', form=form)
 
 
 if __name__ == '__main__':
