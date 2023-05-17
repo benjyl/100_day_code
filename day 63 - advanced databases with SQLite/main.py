@@ -15,6 +15,7 @@ def add():
     if request.method == "POST":
         all_books.append(request.form.to_dict())
         print(all_books)
+        return redirect(url_for('home'))
     return render_template("add.html")
 
 if __name__ == "__main__":
