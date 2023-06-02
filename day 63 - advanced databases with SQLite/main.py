@@ -39,7 +39,7 @@ def edit_rating(id):
         return redirect(url_for('home'))
     return render_template("edit.html", book=db.session.query(Book).get(id))
 
-@app.route("/delete/id=<id>")
+@app.route("/delete/id=<int:id>")
 def del_book(id):
     book_delete = Book.query.get(id)
     db.session.delete(book_delete)
