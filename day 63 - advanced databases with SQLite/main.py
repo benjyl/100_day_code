@@ -30,7 +30,7 @@ def add():
         return redirect(url_for('home'))
     return render_template("add.html")
 
-@app.route("/edit?id=<id>",  methods=["GET", "POST"])
+@app.route("/edit/id<int:id>",  methods=["GET", "POST"])
 def edit_rating(id):
     if request.method == "POST":
         book_update = Book.query.get(id)
