@@ -13,11 +13,13 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 Bootstrap(app)
 
+# WTForm for editing movie rating and review
 class RateMovieform(FlaskForm):
     rating = FloatField(label="Your Rating Out of 10 e.g. 7.5", validators=[DataRequired()])
     review = StringField(label="Your Review", validators=[DataRequired()])
     submit = SubmitField(label="Done")
 
+# SQLAlchemy database
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=True, nullable=False)
@@ -29,7 +31,8 @@ class Movie(db.Model):
     img_url = db.Column(db.String(250), nullable=False)
 
 with app.app_context():
-    db.create_all()
+    db.create_all() # create database
+    # if no entries to database then add first entry
     if not Movie.query.first():
         new_movie = Movie(title="Phone Booth", year=2002,
         description="Publicist Stuart Shepard finds himself trapped in a phone booth, pinned down by an extortionist's sniper rifle. Unable to leave or receive outside help, Stuart's negotiation with the caller leads to a jaw-dropping climax.",
@@ -42,20 +45,31 @@ with app.app_context():
 
 @app.route("/")
 def home():
-    top_movies = Movie.query.all()
-    return render_template("index.html", movies = top_movies)
+    top_movies = Movie.query.all() # get all movies
+    return render_template("index.html", movies = top_movies) # show all movies 
 
+# Edit rating and review for given movie when press update
 @app.route("/edit/id=<int:id>", methods=["GET", "POST"])
 def edit(id):
-    # movie_id = id
+    
+    # Get WTForm data
     form = RateMovieform()
     if form.validate_on_submit():
         movie_to_update = Movie.query.get(id)
+        # Update SQL database
         movie_to_update.rating = form.rating.data
         movie_to_update.review = form.review.data
         db.session.commit()
         return redirect("/")
     return render_template("edit.html", form=form)
+
+@app.route("/delete/id=<int:id>")
+def delete(id):
+    book_to_delete = Movie.query.get(id)
+    db.session.delete(book_to_delete)
+    db.session.commit()
+    return redirect(url_for('home'))
+    
 
 if __name__ == '__main__':
     
