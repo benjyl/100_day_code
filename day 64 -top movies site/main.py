@@ -6,6 +6,10 @@ from wtforms import StringField, FloatField, SubmitField
 from wtforms.validators import DataRequired
 import requests
 
+API_KEY = "61ce0c1035ba4401706cbf375d9855f8"
+API_READ_ACCESS = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MWNlMGMxMDM1YmE0NDAxNzA2Y2JmMzc1ZDk4NTVmOCIsInN1YiI6IjY0N2RjZTdjY2Y0YjhiMDEyMjc3MTZiYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.vp9Q2K2HhyN24IHNCqOwkQ7abelf4Bji4Rmu22Da2uk"
+MOVIE_URL = "https://api.themoviedb.org/3/search/movie"
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Top-10-movies.db'
@@ -19,6 +23,9 @@ class RateMovieform(FlaskForm):
     review = StringField(label="Your Review", validators=[DataRequired()])
     submit = SubmitField(label="Done")
 
+class AddMovieForm(FlaskForm):
+    title = StringField(label="Movie title", validators=[DataRequired()])
+    submit = SubmitField(label="Add Movie")
 # SQLAlchemy database
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -70,6 +77,29 @@ def delete(id):
     db.session.commit()
     return redirect(url_for('home'))
     
+@app.route("/add", methods = ["GET", "POST"]) # can't use requests without these methods
+def add_movie():
+    form = AddMovieForm()
+    if form.validate_on_submit():
+        movie_to_add = form.title.data
+        headers = {
+            "accept": "application/json",
+            "Authorization": f"Bearer {API_READ_ACCESS}"
+        }
+        params = {"query": movie_to_add}
+        response = requests.get(MOVIE_URL, headers=headers, params=params)
+        movies = response.json()["results"]
+        print(movies)
+        return render_template("select.html", movies=movies)
+
+        # Update SQL database
+        
+        # movie_to_add.rating = form.rating.data
+        # movie_to_add.review = form.review.data
+        # db.session.commit()
+        # return redirect("/")
+    return render_template("add.html", form=form)
+
 
 if __name__ == '__main__':
     
