@@ -8,7 +8,9 @@ import requests
 
 API_KEY = "61ce0c1035ba4401706cbf375d9855f8"
 API_READ_ACCESS = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MWNlMGMxMDM1YmE0NDAxNzA2Y2JmMzc1ZDk4NTVmOCIsInN1YiI6IjY0N2RjZTdjY2Y0YjhiMDEyMjc3MTZiYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.vp9Q2K2HhyN24IHNCqOwkQ7abelf4Bji4Rmu22Da2uk"
+
 MOVIE_URL = "https://api.themoviedb.org/3/search/movie"
+MOVIE_DETAILS_URL = "https://api.themoviedb.org/3/search/movie"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -89,7 +91,7 @@ def add_movie():
         params = {"query": movie_to_add}
         response = requests.get(MOVIE_URL, headers=headers, params=params)
         movies = response.json()["results"]
-        print(movies)
+        # print(movies)
         return render_template("select.html", movies=movies)
 
         # Update SQL database
@@ -99,6 +101,16 @@ def add_movie():
         # db.session.commit()
         # return redirect("/")
     return render_template("add.html", form=form)
+
+@app.route("/select/<int:id>", methods=["GET", "POST"])
+def select_movie(id):
+    print("movie id", id)
+    headers = {
+            "accept": "application/json",
+            "Authorization": f"Bearer {API_READ_ACCESS}"
+    }
+    response = requests.get(MOVIE_DETAILS_URL, headers=headers, params={"movie_id": int(id)})
+    print(response.text)
 
 
 if __name__ == '__main__':
