@@ -36,7 +36,7 @@ class Movie(db.Model):
     title = db.Column(db.String(250), unique=True, nullable=False)
     year = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(1000), unique=True, nullable=False)
-    rating = db.Column(db.Float, nullable=True)
+    rating = db.Column(db.Float, nullable=True) # make nullable true so doesn't have to be inputted
     ranking = db.Column(db.Integer, nullable=True)
     review = db.Column(db.String(250), nullable=True)
     img_url = db.Column(db.String(250), nullable=False)
@@ -57,39 +57,26 @@ with app.app_context():
 
 @app.route("/")
 def home():
-    top_movies = Movie.query.all() # get all movies
-    movies = db.session.query(Movie).order_by(asc(Movie.rating)).all()
+    """Renders movie database homepage
+
+    Returns:
+        index.html: index/homepage template showing movies and ranking
+    """
+    movies = db.session.query(Movie).order_by(asc(Movie.rating)).all() # find movies and order them
     print(movies)
     num_movies = len(movies)
     for i in range(num_movies):
-        movies[i].ranking = num_movies - i
+        movies[i].ranking = num_movies - i # provide movie ranking every time homepage reached
     db.session.commit()
     return render_template("index.html", movies = movies) # show all movies 
 
-# Edit rating and review for given movie when press update
-@app.route("/edit/id=<int:id>", methods=["GET", "POST"])
-def edit(id):
-    
-    # Get WTForm data
-    form = RateMovieform()
-    if form.validate_on_submit():
-        movie_to_update = Movie.query.get(id)
-        # Update SQL database
-        movie_to_update.rating = form.rating.data
-        movie_to_update.review = form.review.data
-        db.session.commit()
-        return redirect("/")
-    return render_template("edit.html", form=form)
-
-@app.route("/delete/id=<int:id>")
-def delete(id):
-    book_to_delete = Movie.query.get(id)
-    db.session.delete(book_to_delete)
-    db.session.commit()
-    return redirect(url_for('home'))
-    
 @app.route("/add", methods = ["GET", "POST"]) # can't use requests without these methods
 def add_movie():
+    """Add new movie to database
+
+    Returns:
+        html: page allowing selection of correct movie
+    """
     form = AddMovieForm()
     if form.validate_on_submit():
         movie_to_add = form.title.data
@@ -111,11 +98,51 @@ def add_movie():
         # return redirect("/")
     return render_template("add.html", form=form)
 
+# Edit rating and review for given movie when press update
+@app.route("/edit/id=<int:id>", methods=["GET", "POST"])
+def edit(id):
+    """Update rating and review for movie
+
+    Args:
+        id (int): SQL database ID of movie
+
+    Returns:
+        html: Page for editing movie data 
+    """
+    # Get WTForm data
+    form = RateMovieform()
+    if form.validate_on_submit():
+        movie_to_update = Movie.query.get(id)
+        # Update SQL database
+        movie_to_update.rating = form.rating.data
+        movie_to_update.review = form.review.data
+        db.session.commit()
+        return redirect("/")
+    return render_template("edit.html", form=form)
+
+@app.route("/delete/id=<int:id>")
+def delete(id):
+    """Delete movie from database
+
+    Args:
+        id (int): Movie SQL database id 
+
+    Returns:
+        html: redirects user to homepage
+    """
+    book_to_delete = Movie.query.get(id)
+    db.session.delete(book_to_delete)
+    db.session.commit()
+    return redirect(url_for('home'))
+    
 @app.route("/select", methods=["GET", "POST"])
 def select_movie():
-    # print("movie id", id)
+    """Select movie of choice based on choices from add movie
+
+    Returns:
+        html: edit movie page for providing rating and review
+    """
     movie_api_id = request.args.get("id")
-    print(movie_api_id)
     headers = {
             "accept": "application/json",
             "Authorization": f"Bearer {API_READ_ACCESS}"
@@ -127,16 +154,12 @@ def select_movie():
     base_url_data = requests.get(url=f"https://api.themoviedb.org/3/configuration?api_key={API_KEY}").json()
     base_url = base_url_data["images"]["secure_base_url"]
     backdrop_size = base_url_data["images"]["backdrop_sizes"][1]
-    MOVIE_DB_IMAGE_URL = f"{base_url}/{backdrop_size}"
-    
-    print(base_url)
-    
     # return redirect(url_for(edit)))
     new_movie = Movie(
             title=data["original_title"],
             #The data in release_date includes month and day, we will want to get rid of.
             year=data["release_date"].split("-")[0],
-            img_url=f"{MOVIE_DB_IMAGE_URL}{data['poster_path']}",
+            img_url=f"{base_url}/{backdrop_size}{data['poster_path']}",
             description=data["overview"]
         )
     db.session.add(new_movie)
