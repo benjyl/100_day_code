@@ -5,9 +5,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SubmitField
 from wtforms.validators import DataRequired
 import requests
+from sqlalchemy import desc, asc
 
-API_KEY = "61ce0c1035ba4401706cbf375d9855f8"
-API_READ_ACCESS = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MWNlMGMxMDM1YmE0NDAxNzA2Y2JmMzc1ZDk4NTVmOCIsInN1YiI6IjY0N2RjZTdjY2Y0YjhiMDEyMjc3MTZiYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.vp9Q2K2HhyN24IHNCqOwkQ7abelf4Bji4Rmu22Da2uk"
+API_KEY = "fb403c26144ea4ee4afd01bfa8444db6"
+API_READ_ACCESS = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYjQwM2MyNjE0NGVhNGVlNGFmZDAxYmZhODQ0NGRiNiIsInN1YiI6IjY0N2RjZTdjY2Y0YjhiMDEyMjc3MTZiYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.bK2-S6cVizWGpO8BCO_EAp238OGIy06Tii-4QZQJIzM"
 
 MOVIE_URL = "https://api.themoviedb.org/3/search/movie"
 MOVIE_DETAILS_URL = "https://api.themoviedb.org/3/search/movie"
@@ -28,16 +29,18 @@ class RateMovieform(FlaskForm):
 class AddMovieForm(FlaskForm):
     title = StringField(label="Movie title", validators=[DataRequired()])
     submit = SubmitField(label="Add Movie")
+    
 # SQLAlchemy database
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=True, nullable=False)
     year = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(1000), unique=True, nullable=False)
-    rating = db.Column(db.Float, nullable=False)
-    ranking = db.Column(db.Integer, nullable=False)
-    review = db.Column(db.String(250), nullable=False)
+    rating = db.Column(db.Float, nullable=True)
+    ranking = db.Column(db.Integer, nullable=True)
+    review = db.Column(db.String(250), nullable=True)
     img_url = db.Column(db.String(250), nullable=False)
+
 
 with app.app_context():
     db.create_all() # create database
@@ -55,7 +58,13 @@ with app.app_context():
 @app.route("/")
 def home():
     top_movies = Movie.query.all() # get all movies
-    return render_template("index.html", movies = top_movies) # show all movies 
+    movies = db.session.query(Movie).order_by(asc(Movie.rating)).all()
+    print(movies)
+    num_movies = len(movies)
+    for i in range(num_movies):
+        movies[i].ranking = num_movies - i
+    db.session.commit()
+    return render_template("index.html", movies = movies) # show all movies 
 
 # Edit rating and review for given movie when press update
 @app.route("/edit/id=<int:id>", methods=["GET", "POST"])
@@ -102,17 +111,39 @@ def add_movie():
         # return redirect("/")
     return render_template("add.html", form=form)
 
-@app.route("/select/<int:id>", methods=["GET", "POST"])
-def select_movie(id):
-    print("movie id", id)
+@app.route("/select", methods=["GET", "POST"])
+def select_movie():
+    # print("movie id", id)
+    movie_api_id = request.args.get("id")
+    print(movie_api_id)
     headers = {
             "accept": "application/json",
             "Authorization": f"Bearer {API_READ_ACCESS}"
     }
-    response = requests.get(MOVIE_DETAILS_URL, headers=headers, params={"movie_id": int(id)})
-    print(response.text)
+    response = requests.get(f"https://api.themoviedb.org/3/movie/{movie_api_id}", headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    print(data)
+    base_url_data = requests.get(url=f"https://api.themoviedb.org/3/configuration?api_key={API_KEY}").json()
+    base_url = base_url_data["images"]["secure_base_url"]
+    backdrop_size = base_url_data["images"]["backdrop_sizes"][1]
+    MOVIE_DB_IMAGE_URL = f"{base_url}/{backdrop_size}"
+    
+    print(base_url)
+    
+    # return redirect(url_for(edit)))
+    new_movie = Movie(
+            title=data["original_title"],
+            #The data in release_date includes month and day, we will want to get rid of.
+            year=data["release_date"].split("-")[0],
+            img_url=f"{MOVIE_DB_IMAGE_URL}{data['poster_path']}",
+            description=data["overview"]
+        )
+    db.session.add(new_movie)
+    db.session.commit()
+    movie_id = new_movie.id
+    return redirect(url_for("edit", id=movie_id))
 
 
 if __name__ == '__main__':
-    
     app.run(debug=True)
