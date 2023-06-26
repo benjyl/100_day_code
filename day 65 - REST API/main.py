@@ -24,6 +24,10 @@ class Cafe(db.Model):
     has_sockets = db.Column(db.Boolean, nullable=False)
     can_take_calls = db.Column(db.Boolean, nullable=False)
     coffee_price = db.Column(db.String(250), nullable=True)
+    
+    def to_dict(self):
+        # getattr - retuns value of named attribute of object. E.g. for id returns the id value
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
 
 with app.app_context():
@@ -40,17 +44,7 @@ def random_cafe():
     cafe_choice = db.session.query(Cafe).order_by(func.random()).first()
     # cafe_choice = db.session.query(Cafe).all()
     # random_cafe = random.choice(cafe_choice)
-    return jsonify(can_take_calls = cafe_choice.can_take_calls,
-                   coffee_price = cafe_choice.coffee_price,
-                   has_sockets = cafe_choice.has_sockets,
-                   has_toilet = cafe_choice.has_sockets,
-                   has_wifi = cafe_choice.has_wifi,
-                   id= cafe_choice.id,
-                   img_url = cafe_choice.img_url,
-                   location = cafe_choice.location,
-                   map_url = cafe_choice.map_url,
-                   name = cafe_choice.name,
-                   seats = cafe_choice.seats)
+    return jsonify(cafe_choice.to_dict())
 
 ## HTTP POST - Create Record
 
