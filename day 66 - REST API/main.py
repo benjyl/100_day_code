@@ -8,6 +8,8 @@ import random
     # Use request.args.get when retrieving data passed in URL e.g. for GET & PATCH methods
     # Use request.form.get when posting data to a form e.g. for POST method
     # If try request.form.get for a patch, code doesn't fail, it returns a None
+
+# Use postman to test API - can generate documentation from it for all the different calls
 #########################
 
 API_KEY = "TopSecretAPIKey" # test API key that cafe deletion must match 
