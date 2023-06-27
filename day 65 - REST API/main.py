@@ -51,7 +51,21 @@ def random_cafe():
 def all_cafes():
     all_cafes = db.session.query(Cafe).all()
     # return jsonify({cafe.name: cafe.to_dict() for cafe in all_cafes}) # dict of dicts
-    return jsonify({"cafes": [cafe.to_dict() for cafe in all_cafes]}) # list of dicts
+    return jsonify(cafes=[cafe.to_dict() for cafe in all_cafes]) # list of dicts
+
+@app.route("/search", methods=["GET"])
+def search_cafe_at_location():
+    location = request.args.get("loc") # requested location
+# Can achieve required search by 2 methods, 
+#   1: call class within the session class - only works within the configured session
+#   2: directly call the class 
+    # cafes_at_location = db.session.query(Cafe).filter_by(location = f"{location}").all()
+    cafes_at_location = Cafe.query.filter_by(location=f"{location}").all()
+    if cafes_at_location:
+        return jsonify(cafes=[cafe.to_dict() for cafe in cafes_at_location])
+    else:
+        return jsonify(error={"Not found": "Sorry, we do not have a cafe at that location"})
+    
 ## HTTP POST - Create Record
 
 ## HTTP PUT/PATCH - Update Record
