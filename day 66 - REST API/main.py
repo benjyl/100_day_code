@@ -3,6 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 import random
 
+######## Notes ##########
+# request.args vs request.form 
+    # Use request.args.get when retrieving data passed in URL e.g. for GET & PATCH methods
+    # Use request.form.get when posting data to a form e.g. for POST method
+    # If try request.form.get for a patch, code doesn't fail, it returns a None
+#########################
+
+
 app = Flask(__name__)
 
 ##Connect to Database
@@ -86,8 +94,17 @@ def add_cafe():
     db.session.commit()
     return jsonify(response={"success": "Successfully added the new cafe"})
     
-
 ## HTTP PUT/PATCH - Update Record
+@app.route("/update-price/<int:cafe_id>", methods=["POST", "PATCH"])
+def update_coffee_price(cafe_id):
+    cafe_to_update = Cafe.query.get(cafe_id)
+    print(cafe_to_update)
+    if cafe_to_update:
+        cafe_to_update.coffee_price = request.args.get("new_price") 
+        db.session.commit()
+        return jsonify(success = "Successfully updated the price")
+    else:
+        return jsonify(error = {"Not Found": "Sorry a cafe with that id was not found in the database"})
 
 ## HTTP DELETE - Delete Record
 
