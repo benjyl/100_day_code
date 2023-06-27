@@ -10,6 +10,7 @@ import random
     # If try request.form.get for a patch, code doesn't fail, it returns a None
 #########################
 
+API_KEY = "TopSecretAPIKey" # test API key that cafe deletion must match 
 
 app = Flask(__name__)
 
@@ -107,6 +108,19 @@ def update_coffee_price(cafe_id):
         return jsonify(error = {"Not Found": "Sorry a cafe with that id was not found in the database"})
 
 ## HTTP DELETE - Delete Record
+@app.route("/report-closed/<int:cafe_id>", methods=["DELETE"])
+def delete_cafe(cafe_id):
+    api_key = request.args.get("api-key")
+    if api_key == API_KEY:
+        cafe_closed = Cafe.query.get(cafe_id)
+        if cafe_closed:
+            db.session.delete(cafe_closed)
+            return jsonify(success = "Cafe shutdown and has been successfully removed from the database")
+        else:
+            return jsonify(error = {"Not found": "Cafe queried does not exist in this database"})
+    else:
+        return jsonify(error = "Invalid API-key used, operation not allowed")
+    
 
 
 if __name__ == '__main__':
