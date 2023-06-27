@@ -27,6 +27,7 @@ class Cafe(db.Model):
     
     def to_dict(self):
         # getattr - retuns value of named attribute of object. E.g. for id returns the id value
+        # print(f"table={self.__table__}", f"table columns: {self.__table__.columns}")
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
 
@@ -46,6 +47,10 @@ def random_cafe():
     # random_cafe = random.choice(cafe_choice)
     return jsonify(cafe_choice.to_dict())
 
+@app.route("/all", methods=["GET"]) # "GET" not strictly necessary as allowed by default 
+def all_cafes():
+    all_cafes = db.session.query(Cafe).all()
+    return jsonify({cafe.name: cafe.to_dict() for cafe in all_cafes})
 ## HTTP POST - Create Record
 
 ## HTTP PUT/PATCH - Update Record
