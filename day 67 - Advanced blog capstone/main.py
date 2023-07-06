@@ -1,20 +1,22 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
+import requests
 
 
 ## Delete this code:
 # import requests
-# posts = requests.get("https://api.npoint.io/43644ec4f0013682fc0d").json()
+# posts = requests.get("https://api.npoint.io/88c2c1f644ef334058be").json()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
-ckeditor = CKEditor(app)
 Bootstrap(app)
+ckeditor = CKEditor(app)
+
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
@@ -38,23 +40,34 @@ class CreatePostForm(FlaskForm):
     subtitle = StringField("Subtitle", validators=[DataRequired()])
     author = StringField("Your Name", validators=[DataRequired()])
     img_url = StringField("Blog Image URL", validators=[DataRequired(), URL()])
-    body = StringField("Blog Content", validators=[DataRequired()])
+    body = CKEditorField("Blog Content", validators=[DataRequired()])
     submit = SubmitField("Submit Post")
 
 
-@app.route('/')
+@app.route('/', methods=["GET"])
 def get_all_posts():
+    posts = BlogPost.query.all() # get blog posts from posts.db
+    print(posts)
     return render_template("index.html", all_posts=posts)
 
 
-@app.route("/post/<int:index>")
+@app.route("/post/<int:index>", methods=["GET"])
 def show_post(index):
     requested_post = None
-    for blog_post in posts:
-        if blog_post["id"] == index:
+    print(BlogPost.query.all())
+    for blog_post in BlogPost.query.all():
+        print(blog_post.id)
+        if blog_post.id == index:
+            print(blog_post)
             requested_post = blog_post
     return render_template("post.html", post=requested_post)
 
+@app.route("/new-post", methods=["GET", "POST"])
+def new_post():
+    form = CreatePostForm()
+    if request.method=='POST':
+        data = request.form.get('ckeditor')
+    return render_template("make-post.html", form=form)
 
 @app.route("/about")
 def about():
@@ -66,4 +79,4 @@ def contact():
     return render_template("contact.html")
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
