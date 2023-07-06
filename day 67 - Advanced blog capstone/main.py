@@ -6,6 +6,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
 import requests
+from datetime import datetime
 
 
 ## Delete this code:
@@ -65,8 +66,20 @@ def show_post(index):
 @app.route("/new-post", methods=["GET", "POST"])
 def new_post():
     form = CreatePostForm()
-    if request.method=='POST':
+    if request.method=='POST' and form.validate():
         data = request.form.get('ckeditor')
+        blogpost = BlogPost(
+            title = form.title.data,
+            subtitle = form.subtitle.data,
+            date = datetime.now().strftime("%B %d, %Y"),
+            body = form.body.data,
+            author = form.author.data,
+            img_url = form.img_url.data
+        )
+        db.session.add(blogpost)
+        db.session.commit()
+        posts = BlogPost.query.all()
+        return redirect(url_for('get_all_posts'))    
     return render_template("make-post.html", form=form)
 
 @app.route("/about")
