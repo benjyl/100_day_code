@@ -67,7 +67,7 @@ def show_post(index):
 def new_post():
     form = CreatePostForm()
     if request.method=='POST' and form.validate():
-        data = request.form.get('ckeditor')
+        # data = request.form.get('ckeditor')
         blogpost = BlogPost(
             title = form.title.data,
             subtitle = form.subtitle.data,
@@ -78,9 +78,31 @@ def new_post():
         )
         db.session.add(blogpost)
         db.session.commit()
-        posts = BlogPost.query.all()
+        # posts = BlogPost.query.all()
         return redirect(url_for('get_all_posts'))    
     return render_template("make-post.html", form=form)
+
+@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
+def edit_post(post_id):
+    post = BlogPost.query.get(post_id)
+    # Edit post will prepopulate with current data
+    edit_form = CreatePostForm(title=post.title,
+                               subtitle=post.subtitle,
+                               author=post.author,
+                               img_url=post.img_url,
+                               body=post.body)
+    if request.method=='POST' and edit_form.validate():
+        #Edit data from form entries
+        post.title = edit_form.title.data
+        post.subtitle = edit_form.subtitle.data
+        post.date = datetime.now().strftime("%B %d, %Y")
+        post.body = edit_form.body.data
+        post.author = edit_form.author.data
+        post.img_url = edit_form.img_url.data
+        db.session.commit()
+        return redirect(url_for('show_post', index=post_id))
+
+    return render_template("make-post.html", form=edit_form, new_edit="edit")
 
 @app.route("/about")
 def about():
