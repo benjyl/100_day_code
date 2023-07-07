@@ -95,7 +95,6 @@ def edit_post(post_id):
         #Edit data from form entries
         post.title = edit_form.title.data
         post.subtitle = edit_form.subtitle.data
-        post.date = datetime.now().strftime("%B %d, %Y")
         post.body = edit_form.body.data
         post.author = edit_form.author.data
         post.img_url = edit_form.img_url.data
