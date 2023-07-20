@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, abort
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from forms import CreatePostForm, RegisterForm, LoginForm
 from flask_gravatar import Gravatar
+from functools import wraps
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -41,7 +42,17 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique = True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(100))
-    
+
+@app.errorhandler(403)
+def admin_only(function):
+    @wraps(function)
+    def wrapper_function(*args, **kwargs):
+        if current_user.id ==1:
+            return function(*args, **kwargs)
+        else:
+            return abort(403)
+            
+    return wrapper_function
 
 with app.app_context():
     db.create_all()
@@ -64,7 +75,7 @@ def register():
         new_user.email = registration.email.data
         new_user.password = generate_password_hash(registration.password.data, method='pbkdf2:sha256', salt_length=8)
         new_user.name = registration.name.data
-        if User.query.filter_by(email=new_user.email):
+        if User.query.filter_by(email=new_user.email).first(): # must use .first() else won't give None if email not in database
             # Check whether email already exists in the database
             flash("Email already exists, please login with that email")
             return redirect(url_for("login"))
@@ -123,8 +134,9 @@ def contact():
     return render_template("contact.html")
 
 
-@app.route("/new-post")
+@app.route("/new-post", methods=["GET", "POST"])
 @login_required
+@admin_only
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
@@ -133,17 +145,20 @@ def add_new_post():
             subtitle=form.subtitle.data,
             body=form.body.data,
             img_url=form.img_url.data,
-            author=current_user,
+            author=current_user.name,
             date=date.today().strftime("%B %d, %Y")
         )
         db.session.add(new_post)
         db.session.commit()
-        return redirect(url_for("login"))
+        
+        return redirect(url_for("get_all_posts"))
+    
     return render_template("make-post.html", form=form)
 
 
-@app.route("/edit-post/<int:post_id>")
+@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 @login_required
+@admin_only
 def edit_post(post_id):
     post = BlogPost.query.get(post_id)
     edit_form = CreatePostForm(
@@ -157,7 +172,6 @@ def edit_post(post_id):
         post.title = edit_form.title.data
         post.subtitle = edit_form.subtitle.data
         post.img_url = edit_form.img_url.data
-        post.author = edit_form.author.data
         post.body = edit_form.body.data
         db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
@@ -167,6 +181,7 @@ def edit_post(post_id):
 
 @app.route("/delete/<int:post_id>")
 @login_required
+@admin_only
 def delete_post(post_id):
     post_to_delete = BlogPost.query.get(post_id)
     db.session.delete(post_to_delete)
