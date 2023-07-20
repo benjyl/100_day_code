@@ -45,7 +45,7 @@ def register():
             method='pbkdf2:sha256', 
             salt_length=8
         )
-        if User.query.filter_by(email=new_user.email):
+        if User.query.filter_by(email=request.form.get("email")).first():
             # Check whether email already exists in the database
             flash("Email already exists, login")
             return redirect(url_for("login"))
