@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegisterForm, LoginForm
+from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 from functools import wraps
 
@@ -36,15 +36,20 @@ login_manager.init_app(app)
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
-    # Create foreign key: "users" refers to tablename of User class 
-    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    # Create relationship to User object, "posts" refers to posts property within class
-    author = relationship("User", back_populates="posts")
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
+    
+    # Relationship BlogPost and User
+    # Create foreign key: "users" refers to tablename of User class 
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    # Create relationship to User object, "posts" refers to posts property within class
+    author = relationship("User", back_populates="posts")
+    
+    # Relationship BlogPost and Comments - parent
+    blog_comments = relationship("Comment", back_populates="blog_post")
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -52,7 +57,26 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique = True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(100))
+    
+    # Replationship BlogPost and User - parent
     posts = relationship("BlogPost", back_populates="author") # refer to author attribute in BlogPost class
+    
+    # Relationship User and Comment tables - parent
+    comments = relationship("Comment", back_populates="comment_author")
+    
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False) # use text instead of String - more characters storable
+    
+    # Relationship between User and Comment tables - child
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    comment_author = relationship("User", back_populates="comments")
+    
+    # Relationship between BlogPost and Comment - child
+    blog_id = db.Column(db.Integer, db.ForeignKey("blog_posts.id"))
+    blog_post = relationship("BlogPost", back_populates="blog_comments")
+    
     
 @app.errorhandler(403)
 def admin_only(function):
@@ -128,11 +152,23 @@ def logout():
     return redirect(url_for('get_all_posts'))
 
 
-@app.route("/post/<int:post_id>")
-@login_required
+@app.route("/post/<int:post_id>", methods = ["GET", "POST"])
 def show_post(post_id):
     requested_post = BlogPost.query.get(post_id)
-    return render_template("post.html", post=requested_post)
+    form = CommentForm()
+    if form.validate_on_submit():
+        new_comment = Comment()
+        new_comment.text = form.body.data
+        new_comment.blog_post = requested_post
+        new_comment.comment_author = current_user
+        if current_user.is_authenticated:
+            db.session.add(new_comment)
+            db.session.commit()
+            return redirect(url_for("show_post", post_id=post_id))
+        else:
+            flash("You must log in to comment")
+            return redirect(url_for("login"))
+    return render_template("post.html", post=requested_post, form=form)
 
 
 @app.route("/about")
