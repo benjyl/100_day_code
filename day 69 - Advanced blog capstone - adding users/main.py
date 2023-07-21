@@ -26,10 +26,20 @@ login_manager.init_app(app)
 
 ##CONFIGURE TABLES
 
+################# Bidirectional relationships #####################
+# Need to add relationship variable to both parent and child class
+# relationship first argument = class name, back_populates - name of variable in other class using the relationship method 
+# Add foreign key to the child using the tablename.id
+################# Single direction relationship - One to many #####
+# Only parent has relationship bariable to child
+
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
-    author = db.Column(db.String(250), nullable=False)
+    # Create foreign key: "users" refers to tablename of User class 
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    # Create relationship to User object, "posts" refers to posts property within class
+    author = relationship("User", back_populates="posts")
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
@@ -37,12 +47,13 @@ class BlogPost(db.Model):
     img_url = db.Column(db.String(250), nullable=False)
 
 class User(UserMixin, db.Model):
-    __tablename__ = "User"
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key = True)
     email = db.Column(db.String(100), unique = True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(100))
-
+    posts = relationship("BlogPost", back_populates="author") # refer to author attribute in BlogPost class
+    
 @app.errorhandler(403)
 def admin_only(function):
     @wraps(function)
@@ -145,7 +156,7 @@ def add_new_post():
             subtitle=form.subtitle.data,
             body=form.body.data,
             img_url=form.img_url.data,
-            author=current_user.name,
+            author= current_user, # must be class now as defined using the relationship method between the 2 tables
             date=date.today().strftime("%B %d, %Y")
         )
         db.session.add(new_post)
