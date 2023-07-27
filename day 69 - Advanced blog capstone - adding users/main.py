@@ -10,6 +10,7 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 from functools import wraps
 import secrets
+from datetime import datetime
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -22,12 +23,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# f you want function or variable accessible in all templates (globally).
+# You can add them during flask application initialization to app.jinja_env.globals dict, 
+# like:app.jinja_env.globals['func'] = f
+# Source: https://stackoverflow.com/questions/44206613/how-to-import-and-call-a-python-function-in-a-jinja-template
+app.jinja_env.globals["curr_time"] = datetime.now().year # add current date to jinja environment global variables - use in the footer
+
 # Configuring authentication
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=False, force_lower=False, use_ssl=False, base_url=None)
-
 
 ##CONFIGURE TABLES
 
