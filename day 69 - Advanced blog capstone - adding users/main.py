@@ -9,9 +9,11 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 from functools import wraps
+import secrets
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+# app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config["SECRET_KEY"] = secrets.token_hex()
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -158,6 +160,7 @@ def logout():
 @app.route("/post/<int:post_id>", methods = ["GET", "POST"])
 def show_post(post_id):
     requested_post = BlogPost.query.get(post_id)
+    print(requested_post.img_url)
     form = CommentForm()
     if form.validate_on_submit():
         new_comment = Comment()
